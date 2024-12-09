@@ -1,0 +1,102 @@
+\documentclass[border=1mm]{standalone}
+\usepackage{amssymb, amsmath}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage[utf8]{inputenc}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{xunicode}
+\usepackage{xcolor}
+\begin{document}
+\begin{table}
+\centering
+\begin{tabular}{l|r|r|r|r|l|r|r|r|r|r}
+\hline
+Model & Avg.Bhat & ESE & SEhat & SD(SEHat) & scenario & n & seb\_prop & sebias & ratio & diff\_a\\
+\hline
+\cellcolor{gray!10}{Poisson} & \cellcolor{gray!10}{-0.0009940} & \cellcolor{gray!10}{0.1002895} & \cellcolor{gray!10}{0.1008992} & \cellcolor{gray!10}{0.0059317} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{40} & \cellcolor{gray!10}{0.6079859} & \cellcolor{gray!10}{-0.0006097} & \cellcolor{gray!10}{1.000000} & \cellcolor{gray!10}{0.0006097}\\
+\hline
+Quasi-Poisson & -0.0009940 & 0.1002895 & 0.1001965 & 0.0128097 & Phi=1 & 40 & -0.0927560 & 0.0000930 & 2.159518 & 0.0000930\\
+\hline
+\cellcolor{gray!10}{Sandwich} & \cellcolor{gray!10}{-0.0009940} & \cellcolor{gray!10}{0.1002895} & \cellcolor{gray!10}{0.0960385} & \cellcolor{gray!10}{0.0151834} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{40} & \cellcolor{gray!10}{-4.2387330} & \cellcolor{gray!10}{0.0042510} & \cellcolor{gray!10}{2.559688} & \cellcolor{gray!10}{0.0042510}\\
+\hline
+Unconditional Bootstrap & -0.0009787 & 0.1012264 & 0.0958517 & 0.0160658 & Phi=1 & 40 & -5.3095622 & 0.0053747 & 2.708440 & 0.0053747\\
+\hline
+\cellcolor{gray!10}{Conditional Bootstrap} & \cellcolor{gray!10}{-0.0008175} & \cellcolor{gray!10}{0.1012263} & \cellcolor{gray!10}{0.0958517} & \cellcolor{gray!10}{0.0160658} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{40} & \cellcolor{gray!10}{-5.3094261} & \cellcolor{gray!10}{0.0053745} & \cellcolor{gray!10}{2.708440} & \cellcolor{gray!10}{0.0053745}\\
+\hline
+Negative Binomial & -0.0010259 & 0.1003999 & 0.0973592 & 0.0132238 & Phi=1 & 40 & -3.0286079 & 0.0030407 & 2.229326 & 0.0030407\\
+\hline
+\cellcolor{gray!10}{Poisson} & \cellcolor{gray!10}{0.0001144} & \cellcolor{gray!10}{0.0710886} & \cellcolor{gray!10}{0.0710773} & \cellcolor{gray!10}{0.0027804} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{80} & \cellcolor{gray!10}{-0.0158021} & \cellcolor{gray!10}{0.0000112} & \cellcolor{gray!10}{1.000000} & \cellcolor{gray!10}{0.0000112}\\
+\hline
+Quasi-Poisson & 0.0001144 & 0.0710886 & 0.0708879 & 0.0062195 & Phi=1 & 80 & -0.2822984 & 0.0002007 & 2.236940 & 0.0002007\\
+\hline
+\cellcolor{gray!10}{Sandwich} & \cellcolor{gray!10}{0.0001144} & \cellcolor{gray!10}{0.0710886} & \cellcolor{gray!10}{0.0694400} & \cellcolor{gray!10}{0.0077999} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{80} & \cellcolor{gray!10}{-2.3190547} & \cellcolor{gray!10}{0.0016486} & \cellcolor{gray!10}{2.805336} & \cellcolor{gray!10}{0.0016486}\\
+\hline
+Unconditional Bootstrap & 0.0001472 & 0.0714338 & 0.0692976 & 0.0082512 & Phi=1 & 80 & -2.9903816 & 0.0021361 & 2.967654 & 0.0021361\\
+\hline
+\cellcolor{gray!10}{Conditional Bootstrap} & \cellcolor{gray!10}{0.0000948} & \cellcolor{gray!10}{0.0714244} & \cellcolor{gray!10}{0.0692976} & \cellcolor{gray!10}{0.0082512} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{80} & \cellcolor{gray!10}{-2.9776596} & \cellcolor{gray!10}{0.0021268} & \cellcolor{gray!10}{2.967654} & \cellcolor{gray!10}{0.0021268}\\
+\hline
+Negative Binomial & 0.0001041 & 0.0710657 & 0.0699370 & 0.0063132 & Phi=1 & 80 & -1.5881853 & 0.0011287 & 2.270614 & 0.0011287\\
+\hline
+\cellcolor{gray!10}{Poisson} & \cellcolor{gray!10}{0.0001111} & \cellcolor{gray!10}{0.0509204} & \cellcolor{gray!10}{0.0500733} & \cellcolor{gray!10}{0.0014094} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{160} & \cellcolor{gray!10}{-1.6635585} & \cellcolor{gray!10}{0.0008471} & \cellcolor{gray!10}{1.000000} & \cellcolor{gray!10}{0.0008471}\\
+\hline
+Quasi-Poisson & 0.0001111 & 0.0509204 & 0.0500396 & 0.0031808 & Phi=1 & 160 & -1.7297320 & 0.0008808 & 2.256937 & 0.0008808\\
+\hline
+\cellcolor{gray!10}{Sandwich} & \cellcolor{gray!10}{0.0001111} & \cellcolor{gray!10}{0.0509204} & \cellcolor{gray!10}{0.0494987} & \cellcolor{gray!10}{0.0039483} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{160} & \cellcolor{gray!10}{-2.7920627} & \cellcolor{gray!10}{0.0014217} & \cellcolor{gray!10}{2.801450} & \cellcolor{gray!10}{0.0014217}\\
+\hline
+Unconditional Bootstrap & 0.0001225 & 0.0510825 & 0.0494618 & 0.0042845 & Phi=1 & 160 & -3.1726051 & 0.0016206 & 3.040009 & 0.0016206\\
+\hline
+\cellcolor{gray!10}{Conditional Bootstrap} & \cellcolor{gray!10}{0.0001435} & \cellcolor{gray!10}{0.0510715} & \cellcolor{gray!10}{0.0494618} & \cellcolor{gray!10}{0.0042845} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{160} & \cellcolor{gray!10}{-3.1517533} & \cellcolor{gray!10}{0.0016096} & \cellcolor{gray!10}{3.040009} & \cellcolor{gray!10}{0.0016096}\\
+\hline
+Negative Binomial & 0.0001090 & 0.0509325 & 0.0497184 & 0.0032041 & Phi=1 & 160 & -2.3837028 & 0.0012141 & 2.273448 & 0.0012141\\
+\hline
+\cellcolor{gray!10}{Poisson} & \cellcolor{gray!10}{-0.0000245} & \cellcolor{gray!10}{0.0356758} & \cellcolor{gray!10}{0.0353965} & \cellcolor{gray!10}{0.0006970} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{320} & \cellcolor{gray!10}{-0.7830384} & \cellcolor{gray!10}{0.0002794} & \cellcolor{gray!10}{1.000000} & \cellcolor{gray!10}{0.0002794}\\
+\hline
+Quasi-Poisson & -0.0000245 & 0.0356758 & 0.0353809 & 0.0015685 & Phi=1 & 320 & -0.8267449 & 0.0002949 & 2.250347 & 0.0002949\\
+\hline
+\cellcolor{gray!10}{Sandwich} & \cellcolor{gray!10}{-0.0000245} & \cellcolor{gray!10}{0.0356758} & \cellcolor{gray!10}{0.0352190} & \cellcolor{gray!10}{0.0019766} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{320} & \cellcolor{gray!10}{-1.2806122} & \cellcolor{gray!10}{0.0004569} & \cellcolor{gray!10}{2.835740} & \cellcolor{gray!10}{0.0004569}\\
+\hline
+Unconditional Bootstrap & -0.0000232 & 0.0357585 & 0.0352157 & 0.0022733 & Phi=1 & 320 & -1.5179501 & 0.0005428 & 3.261407 & 0.0005428\\
+\hline
+\cellcolor{gray!10}{Conditional Bootstrap} & \cellcolor{gray!10}{-0.0000456} & \cellcolor{gray!10}{0.0357459} & \cellcolor{gray!10}{0.0352157} & \cellcolor{gray!10}{0.0022733} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{320} & \cellcolor{gray!10}{-1.4830906} & \cellcolor{gray!10}{0.0005301} & \cellcolor{gray!10}{3.261407} & \cellcolor{gray!10}{0.0005301}\\
+\hline
+Negative Binomial & -0.0000240 & 0.0356753 & 0.0352691 & 0.0015739 & Phi=1 & 320 & -1.1387174 & 0.0004062 & 2.257991 & 0.0004062\\
+\hline
+\cellcolor{gray!10}{Poisson} & \cellcolor{gray!10}{-0.0001867} & \cellcolor{gray!10}{0.0254378} & \cellcolor{gray!10}{0.0250178} & \cellcolor{gray!10}{0.0003546} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{640} & \cellcolor{gray!10}{-1.6508600} & \cellcolor{gray!10}{0.0004199} & \cellcolor{gray!10}{1.000000} & \cellcolor{gray!10}{0.0004199}\\
+\hline
+Quasi-Poisson & -0.0001867 & 0.0254378 & 0.0249958 & 0.0007902 & Phi=1 & 640 & -1.7372099 & 0.0004419 & 2.228173 & 0.0004419\\
+\hline
+\cellcolor{gray!10}{Sandwich} & \cellcolor{gray!10}{-0.0001867} & \cellcolor{gray!10}{0.0254378} & \cellcolor{gray!10}{0.0249337} & \cellcolor{gray!10}{0.0009954} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{640} & \cellcolor{gray!10}{-1.9814001} & \cellcolor{gray!10}{0.0005040} & \cellcolor{gray!10}{2.807017} & \cellcolor{gray!10}{0.0005040}\\
+\hline
+Unconditional Bootstrap & -0.0001916 & 0.0254710 & 0.0249306 & 0.0012641 & Phi=1 & 640 & -2.1215728 & 0.0005404 & 3.564702 & 0.0005404\\
+\hline
+\cellcolor{gray!10}{Conditional Bootstrap} & \cellcolor{gray!10}{-0.0001926} & \cellcolor{gray!10}{0.0254650} & \cellcolor{gray!10}{0.0249306} & \cellcolor{gray!10}{0.0012641} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{640} & \cellcolor{gray!10}{-2.0987222} & \cellcolor{gray!10}{0.0005344} & \cellcolor{gray!10}{3.564702} & \cellcolor{gray!10}{0.0005344}\\
+\hline
+Negative Binomial & -0.0001862 & 0.0254357 & 0.0249566 & 0.0007914 & Phi=1 & 640 & -1.8834830 & 0.0004791 & 2.231713 & 0.0004791\\
+\hline
+\cellcolor{gray!10}{Poisson} & \cellcolor{gray!10}{0.0001345} & \cellcolor{gray!10}{0.0176523} & \cellcolor{gray!10}{0.0176835} & \cellcolor{gray!10}{0.0001767} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{1280} & \cellcolor{gray!10}{0.1767877} & \cellcolor{gray!10}{-0.0000312} & \cellcolor{gray!10}{1.000000} & \cellcolor{gray!10}{0.0000312}\\
+\hline
+Quasi-Poisson & 0.0001345 & 0.0176523 & 0.0176820 & 0.0003931 & Phi=1 & 1280 & 0.1682796 & -0.0000297 & 2.224841 & 0.0000297\\
+\hline
+\cellcolor{gray!10}{Sandwich} & \cellcolor{gray!10}{0.0001345} & \cellcolor{gray!10}{0.0176523} & \cellcolor{gray!10}{0.0176559} & \cellcolor{gray!10}{0.0005042} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{1280} & \cellcolor{gray!10}{0.0203103} & \cellcolor{gray!10}{-0.0000036} & \cellcolor{gray!10}{2.853925} & \cellcolor{gray!10}{0.0000036}\\
+\hline
+Unconditional Bootstrap & 0.0001334 & 0.0176726 & 0.0176565 & 0.0007580 & Phi=1 & 1280 & -0.0912593 & 0.0000161 & 4.290626 & 0.0000161\\
+\hline
+\cellcolor{gray!10}{Conditional Bootstrap} & \cellcolor{gray!10}{0.0001448} & \cellcolor{gray!10}{0.0176747} & \cellcolor{gray!10}{0.0176565} & \cellcolor{gray!10}{0.0007580} & \cellcolor{gray!10}{Phi=1} & \cellcolor{gray!10}{1280} & \cellcolor{gray!10}{-0.1030485} & \cellcolor{gray!10}{0.0000182} & \cellcolor{gray!10}{4.290626} & \cellcolor{gray!10}{0.0000182}\\
+\hline
+Negative Binomial & 0.0001343 & 0.0176526 & 0.0176682 & 0.0003934 & Phi=1 & 1280 & 0.0886938 & -0.0000157 & 2.226687 & 0.0000157\\
+\hline
+\end{tabular}
+\end{table}
+\end{document}
