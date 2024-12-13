@@ -1,0 +1,37 @@
+[
+  {
+    "objectID": "posts.html",
+    "href": "posts.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Properties of variance estimators\n\n\n\nR\n\n\nvariance\n\n\nstability\n\n\nglms\n\n\n\nA look at their bias and stability under three data generating mechanisms\n\n\n\nJulia Whitman\n\n\n7/15/24\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Julia Whitman",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Julia Whitman",
+    "section": "",
+    "text": "I’m a biostatistician moonlighting as a data scientist. My previous work includes methods development and applications for variance estimation, randomized trials, health policy, survival analysis, and generative AI tools."
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "Julia Whitman",
+    "section": "Education",
+    "text": "Education\n2024 - MS in Biostatistics | Vanderbilt University\n2014 - MSc in Epidemiology | Imperial College London"
+  },
+  {
+    "objectID": "about.html#experience",
+    "href": "about.html#experience",
+    "title": "Julia Whitman",
+    "section": "Experience",
+    "text": "Experience\nMeta | Sr. Data Scientist | Sept 2024 - present\nVanderbilt University Medical Center | Graduate Biostatistician | Aug 2021 - Aug 2024\nUniversity of California, San Francisco | Data Manager | May 2019 - May 2021"
+  }
+]
