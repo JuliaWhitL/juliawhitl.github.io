@@ -1,0 +1,518 @@
+---
+title: "Tidy Tuesday: Perfume"
+description: "Looking at data in the Tidy Tuesday challenge for Dec 10, 2024"
+author:
+  - name: Julia Whitman
+    #url: https://ir.vanderbilt.edu/items/d091d5b8-8f03-4cb9-a996-ea12dcc87461
+    #orcid: 0000-0002-5300-3075
+    #affiliation: Department of Biostatistics @ Vanderbilt University
+    #affiliation-url: https://www.vanderbilt.edu/biostatistics-graduate/
+date: 12-10-2024
+categories: [tidy] # self-defined categories
+#citation: 
+#  url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/ 
+#image: preview-image.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+fontsize: 0.8em
+format: html
+execute: 
+  echo: false
+  warning: false
+  comment: false
+---
+
+```{mermaid}
+%%| fig-width: 6
+flowchart LR
+imp[Import]
+rec[Recode]
+annot[Annotate]
+anal[Analysis]
+uni[Univariate<br>Descriptive<br>Analysis]
+ds[Data<br>Snapshot]
+biv[Descriptive<br>Association<br>Analysis]
+imp --> rec --> annot --> ds --> anal
+anal --> uni & biv
+```
+
+```{r}
+# Ref: adapted from Harrell: https://hbiostat.org/rflow/case
+library(tidyverse)
+require(Hmisc)
+library(stringr)
+require(qreport)
+require(data.table)
+options(prType='html') # make describe & contents print in html
+hookaddcap()   # make knitr call a function at the end of each chunk
+               # to automatically add to list of figures (in qreport)
+
+# Import data from tidytuesday (already cleaned)
+tuesdata <- tidytuesdayR::tt_load(2024, week = 50)
+dta <- tuesdata$parfumo_data_clean
+```
+```{r}
+# Convert blanks in character fields to NAs
+g <- function(x)
+  if(is.character(x)) ifelse(trimws(x) == '', NA, x) else x
+dta <- lapply(dta, g)
+
+# Change from list to data table
+setDT(dta)
+
+# Make a copy so to preserve original w/o occupying as much memory
+d <- copy(dta)
+setDT(d)
+
+# change to lower case var names
+colnames(d) <- tolower(colnames(d))
+```
+
+## Missing data
+```{r}
+missChk(d)
+dataOverview(d)
+```
+'perfume' has 59, 325 observations (45 complete), and 13 variables (1 complete).
+
+## Descriptive statistics
+```{r}
+#sparkline::sparkline(0)
+
+des <- describe(d)
+html(des, scroll = F)
+#shiny version of this isn't working (see https://github.com/coatless-quarto/r-shinylive-demo for troubleshooting static website + shiny app issues)
+#print(des, 'both')
+#maketabs(print(des, 'both'), wide = TRUE)
+```
+
+```{r}
+options(grType='plotly')   # makes plot() use plotly
+p <- plot(des)   # stores two plot objects in p
+p
+#p$Categorical    # picks off the first one
+```
+
+## Bivartiate Descriptions
+```{r}
+#plot(summaryM(rating_value ~ release_year, data=d))
+```
+
+## Data Cleaning
+```{r, eval=FALSE}
+##Group notes into broad standard categories
+## Top notes
+top_counts <- d %>% separate_longer_delim(top_notes, delim = ",") %>% group_by(top_notes) %>%
+summarise(n = n()) %>% arrange(desc(n))
+#remove leading white space
+top_counts$top_notes <- str_trim(top_counts$top_notes, "left")
+
+top_counts <- top_counts %>%
+  group_by(top_notes) %>%
+  summarise(across(c(n), sum)) %>%
+  arrange(desc(n))
+
+# create broad note category
+top_counts$cat <- NA
+
+top_counts <- top_counts %>%
+  mutate(cat = case_when(
+    #citrus notes
+    grepl(c("orange|Orange|tangerine|Tangerine|lime|lemon|Bergamot|bergamot|Citrus|citrus|grapefruit|Grapefruit|Pomelo|pomelo|neroli|yuzu|petigrain|clementine"), top_notes, ignore.case = TRUE) & !grepl(c("blossom|Blossom"), top_notes, ignore.case = TRUE) ~ "citrus",
+    
+    #fruit & veg notes
+    grepl(c("blackcurrant|Blackcurrant|Peach|peach|pear|Pear|Apple|apple|Raspberry|raspberry|Pineapple|pineapple|Plum|plum|Lychee|lychee|Fruit|fruit|Melon|melon|Apricot|apricot|Berry|berry|Rhubarb|rhubarb|Almond|almond|Berries|berries|Cherry|cherry|Pomegranate|pomegranate|Fig|fig|Currant|currant|Nectarine|nectarine|Kumquat|kumquat|Kiwi|kiwi|cucumber|Cucumber|Guava|guava|Quince|quince|Papaya|papaya|petitgrain|mango|grape"), top_notes, ignore.case = TRUE) ~ "fruitveg",
+    
+    #floral notes
+    grepl(c("rose|Rose|Freesia|freesia|Violet|violet|Geranium|geranium|Lily|lily|hyacinth|Hyacinth|floral|Floral|iris|Iris|peony|Osmanthus|lotus|Tagetes|Heliotrope|orchid|lilac|laurel|hawthorn|carnation|marigold|mimosa|flower|Cyclamen|Narcissus|Myrtle"), top_notes, ignore.case = TRUE) ~ "floral",
+    
+    #white florals
+    grepl(c("blossom|Blossom|gardenia|Gardenia|jasime|Jasmine|Magnolia|magnolia|ylang"), top_notes, ignore.case = TRUE) ~ "whitefloral",
+    
+    # green & herby
+    grepl(c("basil|green|mint|sage|davana|tobacco|lavender|eucalyptus|herb|mugwort|mate|juniper|Galbanum|root|Tarragon|Artemisia|Citron|Vervain|Angelica|aromatic|kelp|cannabis|cabbage"), top_notes, ignore.case = TRUE) & !grepl(c("mint|blossom"), top_notes, ignore.case = TRUE) ~ "herbacious",
+    
+    #spices
+    grepl(c("cumin|pepper|pimento|cassia|cardamom|saffron|cinnamon|nutmeg|frankincense|clove|thyme|spice|bay|chili|anise|mint|spicy|ginger|coriander|fennel|oregano|oriental|Caraway|onion"), top_notes, ignore.case = TRUE) ~ "spicy",
+    
+    #sweet & gourmand
+    grepl(c("caramel|honey|coffee|vanilla|chamomile|milk|tea|hazelnut|tonka|coconut|cocoa|chocolate|vermouth|salt|sweet|rum|frangipani|champagne|liquorice|pistachio|carrot|bread|toast|banana|date|cognac|vinegar|Absinth|whisky|wine|rice|cream|riesling"), top_notes, ignore.case = TRUE) & !grepl(c("pomelo"), top_notes, ignore.case = TRUE) ~ "gourmand",
+    
+    #woody
+    grepl(c("bamboo|wood|moss|leaf|leaves|grass|ivy|cedar|pine|patch|vetiver|Cypress"), top_notes, ignore.case = TRUE) ~ "woody",
+
+    #musk, amber, animalic
+    grepl(c("musk|animal|amber|leather|oud|odor|funk|ambrette"), top_notes, ignore.case = TRUE) ~ "animalic",
+    
+    #resins
+    grepl(c("resin|balsam|benzoin|Labdanum|myrrh"), top_notes, ignore.case = TRUE) ~ "resinous",
+
+    #synthetics
+    grepl(c("ozon|aldehyde|marine|fresh|smok|diesel|dew|skunk|smog|gas|contamination|dust|air|sea|aquatic|rust|oil|acid|charcoal|must|chemical|mud|rain|powder|pollution"), top_notes, ignore.case = TRUE) ~ "synthetic",
+    
+   # none
+    is.na(top_notes) ~ "not reported",
+    
+    # other weird ones or uncategorized
+    TRUE ~ "other"
+))
+
+#top_counts %>%
+ # filter(is.na(cat))
+```
+
+```{r, eval=FALSE}
+##Middle notes
+middle_counts <- d %>% separate_longer_delim(middle_notes, delim = ",") %>% group_by(middle_notes) %>%
+summarise(n = n()) %>% arrange(desc(n))
+
+#remove leading white space
+middle_counts$middle_notes <- str_trim(middle_counts$middle_notes, "left")
+
+middle_counts <- middle_counts %>%
+  group_by(middle_notes) %>%
+  summarise(across(c(n), sum)) %>%
+  arrange(desc(n))
+
+# create broad note category
+middle_counts$cat <- NA
+
+middle_counts <- middle_counts %>%
+  mutate(cat = case_when(
+    #citrus notes
+    grepl(c("orange|Orange|tangerine|Tangerine|lime|lemon|Bergamot|bergamot|Citrus|citrus|grapefruit|Grapefruit|Pomelo|pomelo|neroli|yuzu|petigrain|clementine"), middle_notes, ignore.case = TRUE) & !grepl(c("blossom|Blossom"), middle_notes, ignore.case = TRUE) ~ "citrus",
+    
+    #fruit & veg notes
+    grepl(c("blackcurrant|Blackcurrant|Peach|peach|pear|Pear|Apple|apple|Raspberry|raspberry|Pineapple|pineapple|Plum|plum|Lychee|lychee|Fruit|fruit|Melon|melon|Apricot|apricot|Berry|berry|Rhubarb|rhubarb|Almond|almond|Berries|berries|Cherry|cherry|Pomegranate|pomegranate|Fig|fig|Currant|currant|Nectarine|nectarine|Kumquat|kumquat|Kiwi|kiwi|cucumber|Cucumber|Guava|guava|Quince|quince|Papaya|papaya|petitgrain|mango|grape"), middle_notes, ignore.case = TRUE) ~ "fruitveg",
+    
+    #floral notes
+    grepl(c("rose|Rose|Freesia|freesia|Violet|violet|Geranium|geranium|Lily|lily|hyacinth|Hyacinth|floral|Floral|iris|Iris|peony|Osmanthus|lotus|Tagetes|Heliotrope|orchid|lilac|laurel|hawthorn|carnation|marigold|mimosa|flower|Cyclamen|Narcissus|Myrtle"), middle_notes, ignore.case = TRUE) ~ "floral",
+    
+    #white florals
+    grepl(c("blossom|Blossom|gardenia|Gardenia|jasime|Jasmine|Magnolia|magnolia|ylang"), middle_notes, ignore.case = TRUE) ~ "whitefloral",
+    
+    # green & herby
+    grepl(c("basil|green|mint|sage|davana|tobacco|lavender|eucalyptus|herb|mugwort|mate|juniper|Galbanum|root|Tarragon|Artemisia|Citron|Vervain|Angelica|aromatic|kelp|cannabis|cabbage"), middle_notes, ignore.case = TRUE) & !grepl(c("mint|blossom"), middle_notes, ignore.case = TRUE) ~ "herbacious",
+    
+    #spices
+    grepl(c("cumin|pepper|pimento|cassia|cardamom|saffron|cinnamon|nutmeg|frankincense|clove|thyme|spice|bay|chili|anise|mint|spicy|ginger|coriander|fennel|oregano|oriental|Caraway|onion"), middle_notes, ignore.case = TRUE) ~ "spicy",
+    
+    #sweet & gourmand
+    grepl(c("caramel|honey|coffee|vanilla|chamomile|milk|tea|hazelnut|tonka|coconut|cocoa|chocolate|vermouth|salt|sweet|rum|frangipani|champagne|liquorice|pistachio|carrot|bread|toast|banana|date|cognac|vinegar|Absinth|whisky|wine|rice|cream|riesling"), middle_notes, ignore.case = TRUE) & !grepl(c("pomelo"), middle_notes, ignore.case = TRUE) ~ "gourmand",
+    
+    #woody
+    grepl(c("bamboo|wood|moss|leaf|leaves|grass|ivy|cedar|pine|patch|vetiver|Cypress"), middle_notes, ignore.case = TRUE) ~ "woody",
+
+    #musk, amber, animalic
+    grepl(c("musk|animal|amber|leather|oud|odor|funk|ambrette"), middle_notes, ignore.case = TRUE) ~ "animalic",
+    
+    #resins
+    grepl(c("resin|balsam|benzoin|Labdanum|myrrh"), middle_notes, ignore.case = TRUE) ~ "resinous",
+
+    #synthetics
+    grepl(c("ozon|aldehyde|marine|fresh|smok|diesel|dew|skunk|smog|gas|contamination|dust|air|sea|aquatic|rust|oil|acid|charcoal|must|chemical|mud|rain|powder|pollution"), middle_notes, ignore.case = TRUE) ~ "synthetic"
+    ,
+    
+    # none
+    is.na(middle_notes) ~ "not reported",
+    
+    # other weird ones or uncategorized
+    TRUE ~ "other"
+  
+))
+```
+
+```{r, eval=FALSE}
+##Base notes
+base_counts <- d %>% separate_longer_delim(base_notes, delim = ",") %>% group_by(base_notes) %>%
+summarise(n = n()) %>% arrange(desc(n))
+
+#remove leading white space
+base_counts$base_notes <- str_trim(base_counts$base_notes, "left")
+
+base_counts <- base_counts %>%
+  group_by(base_notes) %>%
+  summarise(across(c(n), sum)) %>%
+  arrange(desc(n))
+
+# create broad note category
+base_counts$cat <- NA
+
+base_counts <- base_counts %>%
+  mutate(cat = case_when(
+    #citrus notes
+    grepl(c("orange|Orange|tangerine|Tangerine|lime|lemon|Bergamot|bergamot|Citrus|citrus|grapefruit|Grapefruit|Pomelo|pomelo|neroli|yuzu|petigrain|clementine"), base_notes, ignore.case = TRUE) & !grepl(c("blossom|Blossom"), base_notes, ignore.case = TRUE) ~ "citrus",
+    
+    #fruit & veg notes
+    grepl(c("blackcurrant|Blackcurrant|Peach|peach|pear|Pear|Apple|apple|Raspberry|raspberry|Pineapple|pineapple|Plum|plum|Lychee|lychee|Fruit|fruit|Melon|melon|Apricot|apricot|Berry|berry|Rhubarb|rhubarb|Almond|almond|Berries|berries|Cherry|cherry|Pomegranate|pomegranate|Fig|fig|Currant|currant|Nectarine|nectarine|Kumquat|kumquat|Kiwi|kiwi|cucumber|Cucumber|Guava|guava|Quince|quince|Papaya|papaya|petitgrain|mango|grape"), base_notes, ignore.case = TRUE) ~ "fruitveg",
+    
+    #floral notes
+    grepl(c("rose|Rose|Freesia|freesia|Violet|violet|Geranium|geranium|Lily|lily|hyacinth|Hyacinth|floral|Floral|iris|Iris|peony|Osmanthus|lotus|Tagetes|Heliotrope|orchid|lilac|laurel|hawthorn|carnation|marigold|mimosa|flower|Cyclamen|Narcissus|Myrtle"), base_notes, ignore.case = TRUE) ~ "floral",
+    
+    #white florals
+    grepl(c("blossom|Blossom|gardenia|Gardenia|jasime|Jasmine|Magnolia|magnolia|ylang"), base_notes, ignore.case = TRUE) ~ "whitefloral",
+    
+    # green & herby
+    grepl(c("basil|green|mint|sage|davana|tobacco|lavender|eucalyptus|herb|mugwort|mate|juniper|Galbanum|root|Tarragon|Artemisia|Citron|Vervain|Angelica|aromatic|kelp|cannabis|cabbage"), base_notes, ignore.case = TRUE) & !grepl(c("mint|blossom"), base_notes, ignore.case = TRUE) ~ "herbacious",
+    
+    #spices
+    grepl(c("cumin|pepper|pimento|cassia|cardamom|saffron|cinnamon|nutmeg|frankincense|clove|thyme|spice|bay|chili|anise|mint|spicy|ginger|coriander|fennel|oregano|oriental|Caraway|onion"), base_notes, ignore.case = TRUE) ~ "spicy",
+    
+    #sweet & gourmand
+    grepl(c("caramel|honey|coffee|vanilla|chamomile|milk|tea|hazelnut|tonka|coconut|cocoa|chocolate|vermouth|salt|sweet|rum|frangipani|champagne|liquorice|pistachio|carrot|bread|toast|banana|date|cognac|vinegar|Absinth|whisky|wine|rice|cream|riesling"), base_notes, ignore.case = TRUE) & !grepl(c("pomelo"), base_notes, ignore.case = TRUE) ~ "gourmand",
+    
+    #woody
+    grepl(c("bamboo|wood|moss|leaf|leaves|grass|ivy|cedar|pine|patch|vetiver|Cypress"), base_notes, ignore.case = TRUE) ~ "woody",
+
+    #musk, amber, animalic
+    grepl(c("musk|animal|amber|leather|oud|odor|funk|ambrette"), base_notes, ignore.case = TRUE) ~ "animalic",
+    
+    #resins
+    grepl(c("resin|balsam|benzoin|Labdanum|myrrh"), base_notes, ignore.case = TRUE) ~ "resinous",
+
+    #synthetics
+    grepl(c("ozon|aldehyde|marine|fresh|smok|diesel|dew|skunk|smog|gas|contamination|dust|air|sea|aquatic|rust|oil|acid|charcoal|must|chemical|mud|rain|powder|pollution"), base_notes, ignore.case = TRUE) ~ "synthetic"
+    ,
+    
+    # none
+    is.na(base_notes) ~ "not reported",
+    
+    # other weird ones or uncategorized
+    TRUE ~ "other"
+  
+))
+```
+
+```{r}
+## Create columns for 13 categories
+d$animalic <- NA 
+d$citrus <- NA 
+d$floral <- NA 
+d$whitefloral <- NA 
+d$fruitveg <- NA 
+d$gourmand <- NA 
+d$herbacious <- NA 
+d$resinous <- NA 
+d$spicy <- NA
+d$synthetic <- NA
+d$woody <- NA
+
+## Designate category for topnotes of each perfume
+d <- d %>% 
+  mutate(animalic = case_when(
+  grepl(c("musk|animal|amber|leather|oud|odor|funk|ambrette"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(citrus = case_when(
+  grepl(c("orange|Orange|tangerine|Tangerine|lime|lemon|Bergamot|bergamot|Citrus|citrus|grapefruit|Grapefruit|Pomelo|pomelo|neroli|yuzu|petigrain|clementine"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(floral = case_when(
+  grepl(c("rose|Rose|Freesia|freesia|Violet|violet|Geranium|geranium|Lily|lily|hyacinth|Hyacinth|floral|Floral|iris|Iris|peony|Osmanthus|lotus|Tagetes|Heliotrope|orchid|lilac|laurel|hawthorn|carnation|marigold|mimosa|flower|Cyclamen|Narcissus|Myrtle"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(whitefloral = case_when(
+  grepl(c("blossom|Blossom|gardenia|Gardenia|jasime|Jasmine|Magnolia|magnolia|ylang"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(fruitveg = case_when(
+  grepl(c("blackcurrant|Blackcurrant|Peach|peach|pear|Pear|Apple|apple|Raspberry|raspberry|Pineapple|pineapple|Plum|plum|Lychee|lychee|Fruit|fruit|Melon|melon|Apricot|apricot|Berry|berry|Rhubarb|rhubarb|Almond|almond|Berries|berries|Cherry|cherry|Pomegranate|pomegranate|Fig|fig|Currant|currant|Nectarine|nectarine|Kumquat|kumquat|Kiwi|kiwi|cucumber|Cucumber|Guava|guava|Quince|quince|Papaya|papaya|petitgrain|mango|grape"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(gourmand = case_when(
+  grepl(c("caramel|honey|coffee|vanilla|chamomile|milk|tea|hazelnut|tonka|coconut|cocoa|chocolate|vermouth|salt|sweet|rum|frangipani|champagne|liquorice|pistachio|carrot|bread|toast|banana|date|cognac|vinegar|Absinth|whisky|wine|rice|cream|riesling"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(herbacious = case_when(
+  grepl(c("basil|green|mint|sage|davana|tobacco|lavender|eucalyptus|herb|mugwort|mate|juniper|Galbanum|root|Tarragon|Artemisia|Citron|Vervain|Angelica|aromatic|kelp|cannabis|cabbage"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(resinous = case_when(
+  grepl(c("resin|balsam|benzoin|Labdanum|myrrh"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(spicy = case_when(
+  grepl(c("cumin|pepper|pimento|cassia|cardamom|saffron|cinnamon|nutmeg|frankincense|clove|thyme|spice|bay|chili|anise|mint|spicy|ginger|coriander|fennel|oregano|oriental|Caraway|onion"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(synthetic = case_when(
+  grepl(c("ozon|aldehyde|marine|fresh|smok|diesel|dew|skunk|smog|gas|contamination|dust|air|sea|aquatic|rust|oil|acid|charcoal|must|chemical|mud|rain|powder|pollution"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+d <- d %>% 
+  mutate(woody = case_when(
+  grepl(c("bamboo|wood|moss|leaf|leaves|grass|ivy|cedar|pine|patch|vetiver|Cypress"), top_notes, ignore.case = TRUE) ~ 1,
+  TRUE ~ 0
+))
+
+
+## Designate category for middle notes of each perfume
+d <- d %>% 
+  mutate(animalic = case_when(
+  grepl(c("musk|animal|amber|leather|oud|odor|funk|ambrette"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(citrus = case_when(
+  grepl(c("orange|Orange|tangerine|Tangerine|lime|lemon|Bergamot|bergamot|Citrus|citrus|grapefruit|Grapefruit|Pomelo|pomelo|neroli|yuzu|petigrain|clementine"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(floral = case_when(
+  grepl(c("rose|Rose|Freesia|freesia|Violet|violet|Geranium|geranium|Lily|lily|hyacinth|Hyacinth|floral|Floral|iris|Iris|peony|Osmanthus|lotus|Tagetes|Heliotrope|orchid|lilac|laurel|hawthorn|carnation|marigold|mimosa|flower|Cyclamen|Narcissus|Myrtle"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(whitefloral = case_when(
+  grepl(c("blossom|Blossom|gardenia|Gardenia|jasime|Jasmine|Magnolia|magnolia|ylang"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(fruitveg = case_when(
+  grepl(c("blackcurrant|Blackcurrant|Peach|peach|pear|Pear|Apple|apple|Raspberry|raspberry|Pineapple|pineapple|Plum|plum|Lychee|lychee|Fruit|fruit|Melon|melon|Apricot|apricot|Berry|berry|Rhubarb|rhubarb|Almond|almond|Berries|berries|Cherry|cherry|Pomegranate|pomegranate|Fig|fig|Currant|currant|Nectarine|nectarine|Kumquat|kumquat|Kiwi|kiwi|cucumber|Cucumber|Guava|guava|Quince|quince|Papaya|papaya|petitgrain|mango|grape"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(gourmand = case_when(
+  grepl(c("caramel|honey|coffee|vanilla|chamomile|milk|tea|hazelnut|tonka|coconut|cocoa|chocolate|vermouth|salt|sweet|rum|frangipani|champagne|liquorice|pistachio|carrot|bread|toast|banana|date|cognac|vinegar|Absinth|whisky|wine|rice|cream|riesling"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(herbacious = case_when(
+  grepl(c("basil|green|mint|sage|davana|tobacco|lavender|eucalyptus|herb|mugwort|mate|juniper|Galbanum|root|Tarragon|Artemisia|Citron|Vervain|Angelica|aromatic|kelp|cannabis|cabbage"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(resinous = case_when(
+  grepl(c("resin|balsam|benzoin|Labdanum|myrrh"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(spicy = case_when(
+  grepl(c("cumin|pepper|pimento|cassia|cardamom|saffron|cinnamon|nutmeg|frankincense|clove|thyme|spice|bay|chili|anise|mint|spicy|ginger|coriander|fennel|oregano|oriental|Caraway|onion"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(synthetic = case_when(
+  grepl(c("ozon|aldehyde|marine|fresh|smok|diesel|dew|skunk|smog|gas|contamination|dust|air|sea|aquatic|rust|oil|acid|charcoal|must|chemical|mud|rain|powder|pollution"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(woody = case_when(
+  grepl(c("bamboo|wood|moss|leaf|leaves|grass|ivy|cedar|pine|patch|vetiver|Cypress"), middle_notes, ignore.case = TRUE) ~ 1
+))
+
+
+## Designate category for base notes of each perfume
+d <- d %>% 
+  mutate(animalic = case_when(
+  grepl(c("musk|animal|amber|leather|oud|odor|funk|ambrette"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(citrus = case_when(
+  grepl(c("orange|Orange|tangerine|Tangerine|lime|lemon|Bergamot|bergamot|Citrus|citrus|grapefruit|Grapefruit|Pomelo|pomelo|neroli|yuzu|petigrain|clementine"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(floral = case_when(
+  grepl(c("rose|Rose|Freesia|freesia|Violet|violet|Geranium|geranium|Lily|lily|hyacinth|Hyacinth|floral|Floral|iris|Iris|peony|Osmanthus|lotus|Tagetes|Heliotrope|orchid|lilac|laurel|hawthorn|carnation|marigold|mimosa|flower|Cyclamen|Narcissus|Myrtle"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(whitefloral = case_when(
+  grepl(c("blossom|Blossom|gardenia|Gardenia|jasime|Jasmine|Magnolia|magnolia|ylang"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(fruitveg = case_when(
+  grepl(c("blackcurrant|Blackcurrant|Peach|peach|pear|Pear|Apple|apple|Raspberry|raspberry|Pineapple|pineapple|Plum|plum|Lychee|lychee|Fruit|fruit|Melon|melon|Apricot|apricot|Berry|berry|Rhubarb|rhubarb|Almond|almond|Berries|berries|Cherry|cherry|Pomegranate|pomegranate|Fig|fig|Currant|currant|Nectarine|nectarine|Kumquat|kumquat|Kiwi|kiwi|cucumber|Cucumber|Guava|guava|Quince|quince|Papaya|papaya|petitgrain|mango|grape"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(gourmand = case_when(
+  grepl(c("caramel|honey|coffee|vanilla|chamomile|milk|tea|hazelnut|tonka|coconut|cocoa|chocolate|vermouth|salt|sweet|rum|frangipani|champagne|liquorice|pistachio|carrot|bread|toast|banana|date|cognac|vinegar|Absinth|whisky|wine|rice|cream|riesling"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(herbacious = case_when(
+  grepl(c("basil|green|mint|sage|davana|tobacco|lavender|eucalyptus|herb|mugwort|mate|juniper|Galbanum|root|Tarragon|Artemisia|Citron|Vervain|Angelica|aromatic|kelp|cannabis|cabbage"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(resinous = case_when(
+  grepl(c("resin|balsam|benzoin|Labdanum|myrrh"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(spicy = case_when(
+  grepl(c("cumin|pepper|pimento|cassia|cardamom|saffron|cinnamon|nutmeg|frankincense|clove|thyme|spice|bay|chili|anise|mint|spicy|ginger|coriander|fennel|oregano|oriental|Caraway|onion"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(synthetic = case_when(
+  grepl(c("ozon|aldehyde|marine|fresh|smok|diesel|dew|skunk|smog|gas|contamination|dust|air|sea|aquatic|rust|oil|acid|charcoal|must|chemical|mud|rain|powder|pollution"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d <- d %>% 
+  mutate(woody = case_when(
+  grepl(c("bamboo|wood|moss|leaf|leaves|grass|ivy|cedar|pine|patch|vetiver|Cypress"), base_notes, ignore.case = TRUE) ~ 1
+))
+
+d$animalic[is.na(d$animalic)] <- 0
+d$citrus[is.na(d$citrus)] <- 0
+d$floral[is.na(d$floral)] <- 0
+d$whitefloral[is.na(d$whitefloral)] <- 0
+d$fruitveg[is.na(d$fruitveg)] <- 0
+d$gourmand[is.na(d$gourmand)] <- 0
+d$herbacious[is.na(d$herbacious)] <- 0
+d$resinous[is.na(d$resinous)] <- 0
+d$spicy[is.na(d$spicy)] <- 0
+d$synthetic[is.na(d$synthetic)] <- 0
+d$woody[is.na(d$woody)] <- 0
+```
+
+
+
+
+
+# Questions
+## What factors most influence the rating of a perfume?
+```{r}
+# Rating x year
+ggplot(d, aes(x = release_year, y = rating_value)) + 
+  geom_point() + geom_smooth() +
+  hlabs(Year, Rating)
+
+# Rating x number of votes
+ggplot(d, aes(x = rating_count, y = rating_value)) +
+  geom_point() + geom_smooth() +
+  hlabs('Number of votes', Rating)
+```
+
+## Are there distinct scent families that dominate the market, and how are they perceived by users?
+
+
+## Has the popularity of certain fragrance notes evolved over time?
+
+
+
+

@@ -1,0 +1,251 @@
+---
+title: "Tidy Tuesday: James Beard Award"
+description: "Looking at data in the Tidy Tuesday challenge for Dec 31, 2024"
+author:
+  - name: Julia Whitman
+date: 12-31-2024
+categories: [tidy] # self-defined categories
+#image: preview-image.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+fontsize: 0.8em
+format: html
+execute: 
+  echo: false
+  warning: false
+  comment: false
+---
+
+# Instructions
+
+-   Explore the data, watching out for interesting relationships. We would like to emphasize that you should not draw conclusions about causation in the data. There are various moderating variables that affect all data, many of which might not have been captured in these datasets. As such, our suggestion is to use the data provided to practice your data tidying and plotting techniques, and to consider for yourself what nuances might underlie these relationships.
+-   Create a visualization, a model, a shiny app, or some other piece of data-science-related output, using R or another programming language.
+-   Share your output and the code used to generate it on social media with the #TidyTuesday hashtag.
+
+```{r}
+library(tidyverse)
+library(Hmisc)
+library(stringr)
+library(qreport)
+library(data.table)
+library(ggplot2)
+library(plotly)
+library(lubridate)
+```
+
+```{r}
+## load data from github
+book <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-31/book.csv')
+broadcast_media <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-31/broadcast_media.csv')
+journalism <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-31/journalism.csv')
+leadership <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-31/leadership.csv')
+restaurant_and_chef <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-31/restaurant_and_chef.csv')
+```
+
+# Questions
+
+## 1. How have the subcategories of the various awards changed over time?
+
+Let's start by looking at the winners and nominees for the James Beard **book awards**...
+
+```{r}
+# Create a "demo" dataset, counting the number of times a subcategory is listed by year
+demo <- book %>% group_by(year, subcategory) %>% summarise(n = n())
+
+# Plot categories over time
+plot_ly(data = demo, x = ~year, y = ~n, color = ~subcategory, type = 'bar') %>%
+  layout(barmode = 'stack')
+```
+
+Yikes! Too many categories makes this impossible to read. Let's group like-categories...
+
+```{r}
+# Take a look at all the subcategories in our dataset
+#table(demo$subcategory, useNA = 'always') # no NAs
+
+demo <- demo %>%
+  mutate(subcat = case_when(grepl("americ|US foodways|U.S.", subcategory, ignore.case = TRUE) ~ "American", 
+                            grepl("bak|dessert|bread", subcategory, ignore.case = TRUE) ~ "Baking & Desserts",
+                            grepl("writing", subcategory, ignore.case = TRUE) ~ "Writing",
+                            grepl("veg", subcategory, ignore.case = TRUE) ~ "Veggies",
+                            #grepl("soft", subcategory, ignore.case = TRUE) ~ "Soft Cover",
+                            grepl("ref|nonfiction", subcategory, ignore.case = TRUE) ~ "Reference",
+                            grepl("wine|drink|spirit|beverage", subcategory, ignore.case = TRUE) ~ "Beverage",
+                            grepl("basic|general|time|convenience|quick", subcategory, ignore.case = TRUE) ~ "Simple",
+                            grepl("entertain", subcategory, ignore.case = TRUE) ~ "Entertainment",
+                            grepl("health|special|organic|natural", subcategory, ignore.case = TRUE) ~ "Health",
+                            grepl("foreign|international|asian|oriental|europ|italian|mediter", subcategory, ignore.case = TRUE) ~ "International",
+                            grepl("first|emerging", subcategory, ignore.case = TRUE) ~ "Newcomer",
+                            grepl("single", subcategory, ignore.case = TRUE) ~ "Single Subject",
+                            grepl("photography|visuals", subcategory, ignore.case = TRUE) ~ "Photography",
+                            grepl("meat", subcategory, ignore.case = TRUE) ~ "Fish & Game",
+                            grepl("community|advocacy", subcategory, ignore.case = TRUE) ~ "Community Cookbooks",
+                            grepl("year|fame", subcategory, ignore.case = TRUE) ~ "HoF & CoY Awards",
+                            grepl("chefs|professional", subcategory, ignore.case = TRUE) ~ "Chefs & Restaurants",
+                            grepl("techn|accent", subcategory, ignore.case = TRUE) ~ "Techniques"
+                            ))
+
+# Re-count the number of times a subcategory is listed by year using the newly-created "subcat" variable
+demo <- demo %>% group_by(year, subcat) %>% summarise(n = n())
+
+# What's going on in 2021?
+a <- list(
+  x = 2021,
+  y = 13,
+  text = 'COVID-19',
+  #showarrow = TRUE,
+  arrowhead = 2,
+  arrowsize=1,
+    arrowwidth=2,
+    arrowcolor="black"
+)
+
+# Plot categories over time
+plot_ly(data = demo, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
+  layout(barmode = 'stack', annotations = a, title = "Book Awards")
+
+```
+
+Still a lot, but better. We can see that the pool of nominees is more varied now than it was in the 1970s and 80s. Some categories, like "simple" books for the home cook and books for healthy eating, have maintained their popularity while technical and general "entertainment" cookbooks have become less so. We also see a gap in the data in 2021 due to the COVID-19 pandemic.
+
+Now let's take a look at some of the other award categories, like **Broadcast Media** and **Journalism**. We can use the same process as above to combine similar groups and look at how their popularity has evolved over time.
+
+```{r}
+#table(broadcast_media$subcategory, useNA = 'always') # no NAs
+demo2 <- broadcast_media %>% group_by(year, subcategory) %>% summarise(n = n())
+
+demo2 <- demo2 %>%
+  mutate(subcat = case_when(grepl("radio", subcategory, ignore.case = TRUE) ~ "Radio", 
+                            grepl("online|webcast", subcategory, ignore.case = TRUE) ~ "Online",
+                            grepl("personality", subcategory, ignore.case = TRUE) ~ "Personality/Host",
+                            grepl("journalism|reporting", subcategory, ignore.case = TRUE) ~ "Food journalism & reporting",
+                            grepl("cooking show|cooking series|cooking segment|food segment|food show|television program|television segment|television show", subcategory, ignore.case = TRUE) ~ "Cooking show or series",
+                            grepl("cooking special|television special|food special|documentary|special", subcategory, ignore.case = TRUE) ~ "TV special or documentary",
+                            grepl("podcast|audio program", subcategory, ignore.case = TRUE) ~ "Podcast or audio program",
+                            grepl("culinary video", subcategory, ignore.case = TRUE) ~ "Culinary video",
+                            grepl("excellence", subcategory, ignore.case = TRUE) ~ "Award of Excellence",
+                            grepl("visual media", subcategory, ignore.case = TRUE) ~ "Visual media",
+                            grepl("Emerging", subcategory, ignore.case = TRUE) ~ "Newcomer",
+                            grepl("Social Media", subcategory, ignore.case = TRUE) ~ "Social media account",
+                            grepl("Commercial Media", subcategory, ignore.case = TRUE) ~ "Commercial Media"
+                            ))
+
+# Re-count the number of times a subcategory is listed by year using the newly-created "subcat" variable
+demo2 <- demo2 %>% group_by(year, subcat) %>% summarise(n = n())
+
+# What's going on in 2021?
+a <- list(
+  x = 2021,
+  y = 10,
+  text = 'COVID-19',
+  #showarrow = TRUE,
+  arrowhead = 2,
+  arrowsize=1,
+    arrowwidth=2,
+    arrowcolor="black"
+)
+
+# Plot categories over time
+plot_ly(data = demo2, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
+  layout(barmode = 'stack', annotations = a, title = "Broadcast Media Awards")
+```
+
+```{r}
+#table(journalism$subcategory, useNA = 'always') # no NAs
+demo3 <- journalism %>% group_by(year, subcategory) %>% summarise(n = n())
+
+demo3 <- demo3 %>%
+  mutate(subcat = case_when(grepl("politics|local|foodways", subcategory, ignore.case = TRUE) ~ "Politics & anthropology", 
+                            grepl("Reporting", subcategory, ignore.case = TRUE) ~ "Reporting",
+                            grepl("Magazine Series|newspaper series|section|column", subcategory, ignore.case = TRUE) ~ "Print series or column",
+                            grepl("Review|critique", subcategory, ignore.case = TRUE) ~ "Review",
+                            grepl("Magazine Feature|newspaper feature|Newspaper Writing|Magazine Writing|Feature", subcategory, ignore.case = TRUE) ~ "Print feature",
+                            grepl("M.F.K. Fisher|MFK Fisher", subcategory, ignore.case = TRUE) ~ "M.F.K. Fisher Award",
+                            grepl("Jonathan Gold", subcategory, ignore.case = TRUE) ~ "Jonathan Gold Award",
+                            grepl("profile", subcategory, ignore.case = TRUE) ~ "Profile",
+                            grepl("Storytelling|personal|literary writing", subcategory, ignore.case = TRUE) ~ "Storytelling, personal, or literary writing",
+                            grepl("Travel|culture", subcategory, ignore.case = TRUE) ~ "Dining & travel",
+                            grepl("website|blog|internet", subcategory, ignore.case = TRUE) ~ "Website or blog",
+                            grepl("craig", subcategory, ignore.case = TRUE) ~ "Craig Claiborne Award",
+                            grepl("home|health", subcategory, ignore.case = TRUE) ~ "Home cooking & health",
+                            grepl("Emerging Voice Award", subcategory, ignore.case = TRUE) ~ "Emerging Voice Award",
+                            grepl("Beverage|Sprits", subcategory, ignore.case = TRUE) ~ "Beverage",
+                            grepl("Publication of the Year Award", subcategory, ignore.case = TRUE) ~ "Publication of the Year Award",
+                            grepl("General Interest|general-interest", subcategory, ignore.case = TRUE) ~ "General Interest Publication",
+                            grepl("humor", subcategory, ignore.case = TRUE) ~ "Humor",
+                            grepl("multimedia|multi-media", subcategory, ignore.case = TRUE) ~ "Multimedia",
+                            grepl("Instruction", subcategory, ignore.case = TRUE) ~ "Instruction"
+
+                            ))
+
+# Re-count the number of times a subcategory is listed by year using the newly-created "subcat" variable
+demo3 <- demo3 %>% group_by(year, subcat) %>% summarise(n = n())
+
+# What's going on in 2021?
+a <- list(
+  x = 2021,
+  y = 10,
+  text = 'COVID-19',
+  arrowhead = 2,
+  arrowsize=1,
+    arrowwidth=2,
+    arrowcolor="black"
+)
+
+# Plot categories over time
+plot_ly(data = demo3, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
+  layout(barmode = 'stack', annotations = a, title = "Journalism Awards")
+```
+
+```{r}
+#table(restaurant_and_chef$subcategory, useNA = 'always') # no NAs
+demo4 <- restaurant_and_chef %>% group_by(year, subcategory) %>% summarise(n = n())
+
+demo4 <- demo4 %>%
+  mutate(subcat = case_when(grepl("service|Hospitality", subcategory, ignore.case = TRUE) ~ "Service & hospitality", 
+                            grepl("design|graphics", subcategory, ignore.case = TRUE) ~ "Design & graphics",
+                            grepl("Who's Who", subcategory, ignore.case = TRUE) ~ "Who's Who",
+                            grepl("humanitarian", subcategory, ignore.case = TRUE) ~ "Humanitarian",
+                            grepl("lifetime", subcategory, ignore.case = TRUE) ~ "Lifetime achievement",
+                            grepl("outstanding chef|best chef", subcategory, ignore.case = TRUE) ~ "Best & outstanding chefs",
+                            grepl("outstanding pastry chef|outstanding baker", subcategory, ignore.case = TRUE) ~ "Pastry chefs & bakers",
+                            grepl("best new restaurant|rising star|Emerging", subcategory, ignore.case = TRUE) ~ "Rising stars: chefs & restaurants",
+                            grepl("America's Classics", subcategory, ignore.case = TRUE) ~ "America's classics",
+                            grepl("Outstanding Restaurant|Restaurateur", subcategory, ignore.case = TRUE) ~ "Outstanding restaurant or restaurateur",
+                            grepl("Outstanding Wine & Spirits Professional|Beer Professional|outstanding bar|Wine Program|bar program|Beverages Program|Beer Producer", subcategory, ignore.case = TRUE) ~ "Beverage programs & professionals"
+                            ))
+
+# Re-count the number of times a subcategory is listed by year using the newly-created "subcat" variable
+demo4 <- demo4 %>% group_by(year, subcat) %>% summarise(n = n())
+
+# What's going on in 2021?
+a <- list(
+  x = 2021,
+  y = 10,
+  text = 'COVID-19',
+  arrowhead = 2,
+  arrowsize=1,
+    arrowwidth=2,
+    arrowcolor="black"
+)
+
+# Plot categories over time
+plot_ly(data = demo4, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
+  layout(barmode = 'stack', annotations = a, title = "Restaurant & Chef Awards")
+```
+
+## 2. Has anybody won in multiple categories?
+
+## 3. Which restaurants have the most winners? Which newspapers or networks?
+
+Finally, let's take a look at the biggest winners in the restaurant world.
+
+```{r, eval=FALSE}
+restaurant_and_chef %>% group_by(restaurant) %>% summarise(n = n()) %>%
+   arrange(desc(n))
+```
+
+It looks like some of the cities got put in the "restaurant" column. Let's fix that...
+
+```{r}
+
+```

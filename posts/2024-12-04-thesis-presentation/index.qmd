@@ -1,0 +1,483 @@
+---
+title: "Properties of variance estimators"
+description: "A look at their bias and stability under three data generating mechanisms"
+author:
+  - name: Julia Whitman
+    url: https://ir.vanderbilt.edu/items/d091d5b8-8f03-4cb9-a996-ea12dcc87461
+    #orcid: 0000-0002-5300-3075
+    affiliation: Department of Biostatistics @ Vanderbilt University
+    affiliation-url: https://www.vanderbilt.edu/biostatistics-graduate/
+date: 07-15-2024
+categories: [R, variance, glms] # self-defined categories
+#citation: 
+#  url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/ 
+image: preview-image.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+fontsize: 0.8em
+---
+
+# Study Goals
+
+The purpose of this study is to explore the behavior of several commonly used variance estimators under different data generating mechanisms (DGMs).
+In particular we focus on the variance of the variance estimator (the "stability") and describe the relative trade-offs as they relate to bias and stability.
+
+## Summary of findings
+
+-   Likelihood-based Poisson estimator yielded the most stable SE estimates
+
+-   Robust methods had the largest variability, making them the least stable
+
+-   Trade-off of loosening parametric assumptions included lower stability and greater bias under DGMs explored here
+
+## Outline
+
+-   Chapter 1: Statistical background; models & derivations
+-   Chapter 2: Simulations
+-   Chapter 3: Application to FAMS
+-   Chapter 4: Conclusion
+
+# Background
+
+## Generalized Linear Models
+
+Generalized linear models (GLMs) "generalize" linear regression for exponential family distributions.
+They increase model flexibility by:
+
+-   Transforming the mean using "link" function - allows function of the response to vary linearly with the predictors
+-   Defining a mean-variance relationship
+
+### Approaches to variance estimation using GLMs
+
+-   Likelihood-based methods often used because of mathematical appeal and simplicity
+-   Rigid assumptions are often unrealistic when working with real-world data, which can lead to invalid inference.
+-   Robust estimation methods limit effect of some violations on parameter estimation, especially mean-variance misspecification
+-   Examples include:
+    -   Huber-White sandwich variance
+    -   Bootstrap methods (nonparametric)
+
+### Focus of this work
+
+"What are the trade-offs of using more flexible methods?"
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/ci-example-weird.svg)
+
+**Figure 1**: A simulated illustration of variance estimator instability.
+The variance in the scenario on the left is stable, producing CIs of equal length.
+The variance in the scenario on the right is ”unstable” by contrast, and produces CIs of varying lengths.
+
+# Models
+
+## Estimator validity
+
+**Table 1.** Validity of variance estimators under three data generating mechanisms ![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/hypotheses-validity.jpg)
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/densities-1.2.png){width="90%"}
+
+**Figure 2.** Probability densities under Poisson $(\lambda = 2)$, quasi-Poisson $(\lambda = 2, \phi = 2)$, and negative binomial $(\mu = 2, \phi = 2)$ frameworks.
+These discrete distributions are presented continuously to visualize differences in density and dispersion.
+
+## Derivations
+
+First specified a GLM and defined the mean model and mean-variance relationship.
+We did this using a Poisson distribution with the mean model defined through a log link.
+
+The Poisson density is re-written in canonical form, where the natural parameter is $\theta = log(\lambda)$ and scale parameter is $\phi = 1$.
+Our mean model is defined as $g(E[Y]) = g(\mu) = g(b'(\theta)) = log(\theta)$:
+
+$$
+f(Y|x;\theta,\phi) = exp\Bigg[\frac{y\theta(x^T\beta) - b(\theta(x^T\beta))}{\phi} + c(y, \phi)\Bigg]
+$$ $$f(y|\lambda) = \frac{\lambda^ye^{-\lambda}}{y!}$$ $$=exp\bigg[ylog(\lambda) - \lambda - log(y!)\bigg]$$
+
+Score equations used to estimate parameters via maximum likelihood estimation
+
+$$D^TV^{-1}(y-\mu) = X^T(y-exp(X\beta)) = 0$$
+
+Asymptotically, it can be shown that the distribution of $\beta$ is:
+
+$$\widehat{\beta_N} \sim N \Bigg( \beta_0, \frac{1}{N} \big[A_N(\beta_0) \big]^{-1}B(\beta_0) \big[A_N(\beta_0) \big]^{-1}\Bigg)$$
+
+-   $A_N = A_N^{obs}(\widehat{\beta}) = X^T diag(exp(x_i^T \eta) (1-exp(x_i^T \beta)))X = X^T V(\beta)X$
+
+-   $B_N^{obs} (\widehat{\beta})= \sum_{i=1}^N G(\beta;x_i,Y_i )\times G(\beta;,x_i,Y_i )^T =D^T (\beta) V^{-1} (\beta)diag(Y_i- \mu_i (\beta))^2 V^{-1} (\beta)D(\beta)$
+
+Finally, $\phi$ estimated to use in quasi-Poisson variance estimation:
+
+$$\widehat{\phi} = \frac{1}{N-K}\sum_{i=1}^N \frac{(y_i-\widehat{\mu}_i)^2}{V(\widehat{\mu_i})}$$
+
+$$ = \frac{1}{N-K}\sum_{i=1}^N \frac{(y_i-exp(x_i^T\widehat{\beta}))^2}{exp(x_i^T\widehat{\beta})}$$
+
+The six variance estimators are constructed as follows:
+
+1.  Poisson
+
+    $$\widehat{Cov}[\widehat{\beta}] = A_N^{-1}(\beta)$$
+
+2.  Quasi-Poisson
+
+    $$\widehat{Cov}[\widehat{\beta}] = \widehat{\phi} \times A_N^{-1}(\beta)$$
+
+3.  Sandwich
+
+    $$\widehat{Cov}[\widehat{\beta}] = A_N^{-1}(\beta)\bigg( B_N^{obs}(\widehat{\beta})\bigg)A_N^{-1}(\beta)$$
+
+4.  Unconditional bootstrap
+
+    -   With-replacement sampling with 500 bootstrap replicates conducted over the entire dataset to produce point estimates and SEs.
+
+5.  Conditional bootstrap
+
+    -   With-replacement sampling with 500 bootstrap replicates conducted from within subsets of the data for each X indicator to produce point estimates and SEs.
+
+6.  Negative Binomial
+
+-   Assumed mean-variance relationship: $$Var[Y_i|x_i] = \mu_i + \frac{\mu_i^2}{\phi}$$
+
+-   Estimating equations: $$D^T (\beta) V^{-1} (\beta,\phi)(y-\mu(\beta))=0$$
+
+# Simulation Study
+
+A single predictor, X, was generated as a discrete factor variable taking values 0, 1, 2, or 3 with equally sized groups (1/4 sample size per subgroup)
+
+-   Doubling sample sizes of 40, 80, 160, 320, 640, and 1,280
+-   $\beta's$ were estimated using 5,000 simulations and average estimated SEs were compared to empirical standard errors (ESE)
+
+Three outcome frameworks:
+
+A. Independent Y generated as Poisson($\lambda = 2$) random variable
+
+B. Previous Y distribution multiplied by dispersion parameter, $\phi = 2$
+
+C. Y generated from negative binomial distribution ($\mu = 2, \phi = 2)$
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/images/avg-se.svg){width="100%"}
+
+**Figure 3.** Estimated SE over finite sample sizes
+
+-   The $\widehat{SE}(\widehat{\beta})$ decreased with increasing sample sizes across DGMs
+-   Poisson had smallest SE and fell more quickly than others in B and C
+
+## Estimator bias
+
+The average bias of each estimator was computed as a percentage of the ESE.
+The majority of estimators displayed "negative bias", resulting in an underestimate of the true variance and overstated certainty of the true parameter value.
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/avg-bias-pois.svg){width="90%"}
+
+**Figure 4.** Average bias of SE estimators as a proportion of ESE in the Poisson framework.
+
+-   Lower bias as sample sizes increase
+
+-   The two bootstrap estimators demonstrate the greatest bias across sample sizes, except in N=1,280
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/avg-bias-qp.svg){width="90%"}
+
+**Figure 5.** Average bias of SE estimators as a proportion of the ESE in the quasi-Poisson framework.
+
+-   The Poisson estimator is highly biased compared to all other estimators.
+-   Bias decreases overall in non-Poisson estimators as sample sizes increase, but trend is inconsistent
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/avg-bias-nb.svg){width="90%"}
+
+**Figure 6.** Average bias of SE estimators as a proportion of the ESE in the negative binomial framework.
+
+-   The Poisson estimator is highly biased compared to all other estimators.
+-   Bootstrap and sandwich estimators exhibit more bias than other non-Poisson estimators at smaller sample sizes.
+-   Most estimators are more biased at smaller samples compared to quasi-Poisson scenario
+-   Consistent downward trajectory with increasing sample sizes
+
+## Estimator stability
+
+The stability of each estimator was illustrated using the SD of the estimated SE.
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/sdse-all.svg)
+
+**Figure 7.** SD of the estimated SE over finite sample sizes
+
+-   Likelihood-based Poisson estimator was the most stable (smallest SD of estimated SE) under Poisson, quasi-Poisson and negative binomial frameworks
+-   Quasi-Poisson and negative binomial estimators had comparable performance
+-   Robust estimators had lowest stability with similar patterns
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/sdse-pois.svg)
+
+**Figure 8.** Ratio of individual model SD of the estimated SE to Poisson model SE of the estimated SE
+
+-   Quasi-Poisson and negative binomial performed similarly with constant ratios at N\>160
+-   Sandwich reached constant at higher ratio in scenarios A and B
+-   Bootstrap estimators had largest SD of SE ratios and failed to level off
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/sdse-correct.svg)
+
+**Figure 9.** Ratio of individual model SDvof the estimated SE to the ”correct” model SE of the estimated SE for each respective framework
+
+-   Poisson was the denominator in scenario A
+-   Quasi-Poisson denominator in scenario B
+-   Negative binomial denominator in scenario C
+
+Negative binomial variance estimator was most stable in scenario B.
+Meanwhile, the sandwich had lower stability, and bootstrap estimators performed similarly as in the prior example.
+
+# FAMS Application
+
+Family/friends Activation to Motivate Self-care
+
+-   Text-based intervention to support diabetes management
+-   Recruitment from April 2020 to January 2023
+-   Outpatient clinics at Vanderbilt University Medical Center (VUMC)
+
+## Eligibility
+
+-   Diagnosis of Type II diabetes mellitus (T2DM)
+-   At least one daily diabetes medication
+-   Aged 18-75 years
+-   English-speaking
+-   Community-dwelling
+-   Owned mobile phone
+
+## Trial procedures
+
+-   Randomization was 1:1 to intervention or control
+-   Intervention included monthly coaching sessions for the person with T2DM, text message support, and optional text messages to their designated support person.
+-   All participants received printed material on diabetes management and access to on-study HbA1c
+
+## Study cohort
+
+Performance of our six variance estimators was studied in a subset of the FAMS dataset.
+Participants were included if they had complete data for:
+
+-   Text message responses (participant "engagement")
+-   Number of texts received (offset)
+-   Age
+-   Race/ethnicity
+-   Gender
+-   Education
+-   Income
+-   Insurance
+-   Baseline physical activity \*
+
+**Table 2.** FAMS physical activity groups
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/tbl-fams.png){width="40%"}
+
+## Variance estimation
+
+$\beta$ and SE estimates calculated treating physical activity categorically and continuously
+
+**Table 3.** Estimates of $\beta_1$ and SE for physical activity group, treated categorically
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/tbl-fams-cat.jpg)
+
+**Table 4.** Estimates of $\beta_1$ and SE for physical activity group, treated continuously
+
+![](/Users/juliawhitman/Documents/juliawebsite/posts/2024-12-04-thesis-presentation/tbl-fams-cont.jpg)
+
+# Conclusion
+
+-   Likelihood-based Poisson estimator yields the most “stable” SE estimates in DGMs examined here
+
+-   Robust methods were the least stable (highest variability)
+
+    -   Larger bias than parametric estimators under Poisson framework
+    -   Larger bias than quasi-Poisson and negative binomial estimators under all DGMs
+
+-   Trade-off of loosening parametric assumptions includes lower stability and (potentially) greater bias
+
+-   Results are consistent with limited research on the subject
+
+-   Suggests that parametric methods maybe be favorable over robust ones when we are confident in mean model and mean-variance relationship
+
+-   If not confident robust estimators provide valid estimates, but at the cost of stability
+
+# References
+
+1.  Wedderburn, R. W. M. Quasi-Likelihood Functions, Generalized Linear Models, and the Gauss-Newton Method. *Biometrika* **61**, 439–447 (1974).
+2.  MacKinnon, J. G. & White, H. Some heteroskedasticity-consistent covariance matrix estimators with improved finite sample properties. *Journal of Econometrics* **29**, 305–325 (1985).
+3.  Long, J. S. & Ervin, L. H. Using Heteroscedasticity Consistent Standard Errors in the Linear Regression Model. *The American Statistician* **54**, 217–224 (2000).
+4.  Heagerty, P. J. & Kurland, B. F. Misspecified Maximum Likelihood Estimates and Generalised Linear Mixed Models. *Biometrika* **88**, 973–985 (2001).
+5.  Gourieroux, C., Monfort, A. & Trognon, A. Pseudo Maximum Likelihood Methods: Theory. *Econometrica* **52**, 681–700 (1984).
+6.  Eicker, F. Asymptotic Normality and Consistency of the Least Squares Estimators for Families of Linear Regressions. *The Annals of Mathematical Statistics* **34**, 447–456 (1963).
+7.  Chesher, A. & Jewitt, I. The Bias of a Heteroskedasticity Consistent Covariance Matrix Estimator. *Econometrica* **55**, 1217–1222 (1987).
+8.  Freedman, D. A. On The So-Called “Huber Sandwich Estimator” and “Robust Standard Errors”. *The American Statistician* **60**, 299–302 (2006).
+9.  Raymond J. Carroll, David Ruppert. *Transformation and Weighting in Regression (1st Ed.)*. (Chapman & Hall, 1988).
+10. Mayberry, L. S. *et al.* Rationale, design, and recruitment outcomes for the Family/Friend Activation to Motivate Self-care (FAMS) 2.0 randomized controlled trial among adults with type 2 diabetes and their support persons. *Contemporary Clinical Trials* **122**, 106956 (2022).
+11. Varian. Bootstrap tutorial. (2005).
+12. Efron, B. & Tibshirani, R. J. *An Introduction to the Bootstrap*. (Chapman & Hall).
+13. Liang, K.-Y., Zeger, S. L. & Qaqish, B. Multivariate Regression Analyses for Categorical Data. *Journal of the Royal Statistical Society. Series B (Methodological)* **54**, 3–40 (1992).
+14. Breslow, N. Tests of Hypotheses in Overdispersed Poisson Regression and Other Quasi-Likelihood Models. *Journal of the American Statistical Association* **85**, 565–571 (1990).
+15. Efron, B. Discussion: Jackknife, Bootstrap and Other Resampling Methods in Regression Analysis. *The Annals of Statistics* **14**, 1301–1304 (1986).
+16. Kauermann, G. & Carroll, R. J. A Note on the Efficiency of Sandwich Covariance Matrix Estimation. *Journal of the American Statistical Association* **96**, 1387–1396 (2001)
+17. Mayberry, L. S., Berg, C. A., Harper, K. J. & Osborn, C. Y. The Design, Usability, and Feasibility of a Family-Focused Diabetes Self-Care Support mHealth Intervention for Diverse, Low-Income Adults with Type 2 Diabetes. *J Diabetes Res* **2016**, 7586385 (2016).
+18. Glm \| Statistics 504. <http://www.stat.lsa.umich.edu/~kshedden/stats504/topics/glm/>.
+19. Mayberry, L. S. *et al.* Rationale, design, and recruitment outcomes for the Family/Friend Activation to Motivate Self-care (FAMS) 2.0 randomized controlled trial among adults with type 2 diabetes and their support persons. *Contemporary Clinical Trials* **122**, 106956 (2022).
+20. Bartlett, J. The robust sandwich variance estimator for linear regression (theory). *The Stats Geek* <https://thestatsgeek.com/2013/10/12/the-robust-sandwich-variance-estimator-for-linear-regression/> (2013).
+21. O’Neill, B. Some Useful Moment Results in Sampling Problems. *The American Statistician* **68**, 282–296 (2014).
+22. Nelder, J. A. & Wedderburn, R. W. M. Generalized Linear Models. *Journal of the Royal Statistical Society. Series A (General)* **135**, 370–384 (1972).
+23. Nelson, L. A. *et al.* Glycemic outcomes of a family-focused intervention for adults with type 2 diabetes: Main, mediated, and subgroup effects from the FAMS 2.0 RCT. *Diabetes Research and Clinical Practice* **206**, 110991 (2023).
+24. Roddy, M. K. *et al.* Well-being outcomes of a family-focused intervention for persons with type 2 diabetes and support persons: Main, mediated, and subgroup effects from the FAMS 2.0 RCT. *Diabetes Research and Clinical Practice* **204**, 110921 (2023).
+
+# Appendix A
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |             -0.0009940 | 0.1002895 |      0.1008992 |          0.0059317 |  40 |
+| Quasi-Poisson           |             -0.0009940 | 0.1002895 |      0.1001965 |          0.0128097 |  40 |
+| Sandwich                |             -0.0009940 | 0.1002895 |      0.0960385 |          0.0151834 |  40 |
+| Unconditional Bootstrap |             -0.0009787 | 0.1012264 |      0.0958517 |          0.0160658 |  40 |
+| Conditional Bootstrap   |             -0.0008175 | 0.1012263 |      0.0958517 |          0.0160658 |  40 |
+| Negative Binomial       |             -0.0010259 | 0.1003999 |      0.0973592 |          0.0132238 |  40 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              0.0001144 | 0.0710886 |      0.0710773 |          0.0027804 |  80 |
+| Quasi-Poisson           |              0.0001144 | 0.0710886 |      0.0708879 |          0.0062195 |  80 |
+| Sandwich                |              0.0001144 | 0.0710886 |      0.0694400 |          0.0077999 |  80 |
+| Unconditional Bootstrap |              0.0001472 | 0.0714338 |      0.0692976 |          0.0082512 |  80 |
+| Conditional Bootstrap   |              0.0000948 | 0.0714244 |      0.0692976 |          0.0082512 |  80 |
+| Negative Binomial       |              0.0001041 | 0.0710657 |      0.0699370 |          0.0063132 |  80 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              0.0001111 | 0.0509204 |      0.0500733 |          0.0014094 | 160 |
+| Quasi-Poisson           |              0.0001111 | 0.0509204 |      0.0500396 |          0.0031808 | 160 |
+| Sandwich                |              0.0001111 | 0.0509204 |      0.0494987 |          0.0039483 | 160 |
+| Unconditional Bootstrap |              0.0001225 | 0.0510825 |      0.0494618 |          0.0042845 | 160 |
+| Conditional Bootstrap   |              0.0001435 | 0.0510715 |      0.0494618 |          0.0042845 | 160 |
+| Negative Binomial       |              0.0001090 | 0.0509325 |      0.0497184 |          0.0032041 | 160 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              -2.45e-05 | 0.0356758 |      0.0353965 |          0.0006970 | 320 |
+| Quasi-Poisson           |              -2.45e-05 | 0.0356758 |      0.0353809 |          0.0015685 | 320 |
+| Sandwich                |              -2.45e-05 | 0.0356758 |      0.0352190 |          0.0019766 | 320 |
+| Unconditional Bootstrap |              -2.32e-05 | 0.0357585 |      0.0352157 |          0.0022733 | 320 |
+| Conditional Bootstrap   |              -4.56e-05 | 0.0357459 |      0.0352157 |          0.0022733 | 320 |
+| Negative Binomial       |              -2.40e-05 | 0.0356753 |      0.0352691 |          0.0015739 | 320 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |             -0.0001867 | 0.0254378 |      0.0250178 |          0.0003546 | 640 |
+| Quasi-Poisson           |             -0.0001867 | 0.0254378 |      0.0249958 |          0.0007902 | 640 |
+| Sandwich                |             -0.0001867 | 0.0254378 |      0.0249337 |          0.0009954 | 640 |
+| Unconditional Bootstrap |             -0.0001916 | 0.0254710 |      0.0249306 |          0.0012641 | 640 |
+| Conditional Bootstrap   |             -0.0001926 | 0.0254650 |      0.0249306 |          0.0012641 | 640 |
+| Negative Binomial       |             -0.0001862 | 0.0254357 |      0.0249566 |          0.0007914 | 640 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |    n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|-----:|
+| Poisson                 |              0.0001345 | 0.0176523 |      0.0176835 |          0.0001767 | 1280 |
+| Quasi-Poisson           |              0.0001345 | 0.0176523 |      0.0176820 |          0.0003931 | 1280 |
+| Sandwich                |              0.0001345 | 0.0176523 |      0.0176559 |          0.0005042 | 1280 |
+| Unconditional Bootstrap |              0.0001334 | 0.0176726 |      0.0176565 |          0.0007580 | 1280 |
+| Conditional Bootstrap   |              0.0001448 | 0.0176747 |      0.0176565 |          0.0007580 | 1280 |
+| Negative Binomial       |              0.0001343 | 0.0176526 |      0.0176682 |          0.0003934 | 1280 |
+
+# Appendix B
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              0.0005630 | 0.0999775 |      0.0713014 |          0.0040900 |  40 |
+| Quasi-Poisson           |              0.0005630 | 0.0999775 |      0.1003311 |          0.0127969 |  40 |
+| Sandwich                |              0.0005630 | 0.0999775 |      0.0963882 |          0.0154432 |  40 |
+| Unconditional Bootstrap |              0.0005205 | 0.1009710 |      0.0961896 |          0.0164169 |  40 |
+| Conditional Bootstrap   |              0.0006632 | 0.1009774 |      0.0961896 |          0.0164169 |  40 |
+| Negative Binomial       |              0.0006271 | 0.1004317 |      0.0991426 |          0.0130081 |  40 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |             -0.0001310 | 0.0710436 |      0.0502586 |          0.0020100 |  80 |
+| Quasi-Poisson           |             -0.0001310 | 0.0710436 |      0.0708000 |          0.0063100 |  80 |
+| Sandwich                |             -0.0001310 | 0.0710436 |      0.0693645 |          0.0078348 |  80 |
+| Unconditional Bootstrap |             -0.0001311 | 0.0713394 |      0.0693000 |          0.0082586 |  80 |
+| Conditional Bootstrap   |             -0.0001592 | 0.0713971 |      0.0693000 |          0.0082586 |  80 |
+| Negative Binomial       |             -0.0001638 | 0.0712265 |      0.0703954 |          0.0063686 |  80 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              -7.14e-05 | 0.0493180 |      0.0354186 |          0.0009622 | 160 |
+| Quasi-Poisson           |              -7.14e-05 | 0.0493180 |      0.0499829 |          0.0030762 | 160 |
+| Sandwich                |              -7.14e-05 | 0.0493180 |      0.0494599 |          0.0039000 | 160 |
+| Unconditional Bootstrap |              -8.89e-05 | 0.0494270 |      0.0493968 |          0.0042583 | 160 |
+| Conditional Bootstrap   |              -5.05e-05 | 0.0494537 |      0.0493968 |          0.0042583 | 160 |
+| Negative Binomial       |              -6.25e-05 | 0.0493607 |      0.0498488 |          0.0030926 | 160 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |             -0.0004218 | 0.0352038 |      0.0250113 |          0.0004908 | 320 |
+| Quasi-Poisson           |             -0.0004218 | 0.0352038 |      0.0353537 |          0.0015754 | 320 |
+| Sandwich                |             -0.0004218 | 0.0352038 |      0.0351714 |          0.0019917 | 320 |
+| Unconditional Bootstrap |             -0.0004359 | 0.0352731 |      0.0351616 |          0.0022916 | 320 |
+| Conditional Bootstrap   |             -0.0004371 | 0.0352777 |      0.0351616 |          0.0022916 | 320 |
+| Negative Binomial       |             -0.0004225 | 0.0352567 |      0.0353068 |          0.0015796 | 320 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              0.0004378 | 0.0249512 |      0.0176867 |          0.0002480 | 640 |
+| Quasi-Poisson           |              0.0004378 | 0.0249512 |      0.0250165 |          0.0007849 | 640 |
+| Sandwich                |              0.0004378 | 0.0249512 |      0.0249503 |          0.0009959 | 640 |
+| Unconditional Bootstrap |              0.0004154 | 0.0250164 |      0.0249459 |          0.0012729 | 640 |
+| Conditional Bootstrap   |              0.0004359 | 0.0249868 |      0.0249459 |          0.0012729 | 640 |
+| Negative Binomial       |              0.0004406 | 0.0249523 |      0.0250001 |          0.0007858 | 640 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |    n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|-----:|
+| Poisson                 |              -9.27e-05 | 0.0178998 |      0.0125057 |          0.0001239 | 1280 |
+| Quasi-Poisson           |              -9.27e-05 | 0.0178998 |      0.0176819 |          0.0003912 | 1280 |
+| Sandwich                |              -9.27e-05 | 0.0178998 |      0.0176617 |          0.0005033 | 1280 |
+| Unconditional Bootstrap |              -7.81e-05 | 0.0179147 |      0.0176457 |          0.0007530 | 1280 |
+| Conditional Bootstrap   |              -9.75e-05 | 0.0179274 |      0.0176457 |          0.0007530 | 1280 |
+| Negative Binomial       |              -9.03e-05 | 0.0179027 |      0.0176761 |          0.0003914 | 1280 |
+
+# Appendix C
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |             -0.0027832 | 0.1439292 |      0.1019518 |          0.0084881 |  40 |
+| Quasi-Poisson           |             -0.0027832 | 0.1439292 |      0.1402179 |          0.0191204 |  40 |
+| Sandwich                |             -0.0027832 | 0.1439292 |      0.1328639 |          0.0240734 |  40 |
+| Unconditional Bootstrap |             -0.0028389 | 0.1451528 |      0.1339316 |          0.0258006 |  40 |
+| Conditional Bootstrap   |             -0.0028472 | 0.1449895 |      0.1339316 |          0.0258006 |  40 |
+| Negative Binomial       |             -0.0028086 | 0.1446470 |      0.1378781 |          0.0193214 |  40 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              0.0008553 | 0.0998830 |      0.0713471 |          0.0040432 |  80 |
+| Quasi-Poisson           |              0.0008553 | 0.0998830 |      0.0995701 |          0.0097172 |  80 |
+| Sandwich                |              0.0008553 | 0.0998830 |      0.0967408 |          0.0129371 |  80 |
+| Unconditional Bootstrap |              0.0008461 | 0.1002095 |      0.0969073 |          0.0135414 |  80 |
+| Conditional Bootstrap   |              0.0009187 | 0.1001904 |      0.0969073 |          0.0135414 |  80 |
+| Negative Binomial       |              0.0008852 | 0.1003217 |      0.0987918 |          0.0097646 |  80 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |             -0.0016617 | 0.0705224 |      0.0502501 |          0.0020107 | 160 |
+| Quasi-Poisson           |             -0.0016617 | 0.0705224 |      0.0706579 |          0.0049479 | 160 |
+| Sandwich                |             -0.0016617 | 0.0705224 |      0.0696534 |          0.0068886 | 160 |
+| Unconditional Bootstrap |             -0.0016535 | 0.0707265 |      0.0696098 |          0.0072279 | 160 |
+| Conditional Bootstrap   |             -0.0016353 | 0.0706256 |      0.0696098 |          0.0072279 | 160 |
+| Negative Binomial       |             -0.0016764 | 0.0706664 |      0.0703852 |          0.0049586 | 160 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              0.0005659 | 0.0496569 |      0.0354417 |          0.0009989 | 320 |
+| Quasi-Poisson           |              0.0005659 | 0.0496569 |      0.0499574 |          0.0025081 | 320 |
+| Sandwich                |              0.0005659 | 0.0496569 |      0.0495701 |          0.0035080 | 320 |
+| Unconditional Bootstrap |              0.0005487 | 0.0497190 |      0.0495332 |          0.0038634 | 320 |
+| Conditional Bootstrap   |              0.0005489 | 0.0497020 |      0.0495332 |          0.0038634 | 320 |
+| Negative Binomial       |              0.0005690 | 0.0497315 |      0.0498621 |          0.0025068 | 320 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |   n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|----:|
+| Poisson                 |              -4.27e-05 | 0.0354887 |      0.0250402 |          0.0004891 | 640 |
+| Quasi-Poisson           |              -4.27e-05 | 0.0354887 |      0.0353174 |          0.0012548 | 640 |
+| Sandwich                |              -4.27e-05 | 0.0354887 |      0.0351914 |          0.0017861 | 640 |
+| Unconditional Bootstrap |              -3.13e-05 | 0.0355194 |      0.0351643 |          0.0020905 | 640 |
+| Conditional Bootstrap   |              -4.39e-05 | 0.0355377 |      0.0351643 |          0.0020905 | 640 |
+| Negative Binomial       |              -4.26e-05 | 0.0354916 |      0.0352842 |          0.0012567 | 640 |
+
+| Model                   | Avg. $\widehat{\beta}$ |       ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ |    n |
+|:------------------------|-----------------------:|----------:|---------------:|-------------------:|-----:|
+| Poisson                 |              0.0006466 | 0.0249429 |      0.0176902 |          0.0002509 | 1280 |
+| Quasi-Poisson           |              0.0006466 | 0.0249429 |      0.0249985 |          0.0006259 | 1280 |
+| Sandwich                |              0.0006466 | 0.0249429 |      0.0249509 |          0.0008784 | 1280 |
+| Unconditional Bootstrap |              0.0006283 | 0.0249691 |      0.0249277 |          0.0011782 | 1280 |
+| Conditional Bootstrap   |              0.0006456 | 0.0249891 |      0.0249277 |          0.0011782 | 1280 |
+| Negative Binomial       |              0.0006450 | 0.0249460 |      0.0249871 |          0.0006262 | 1280 |

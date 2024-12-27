@@ -1,0 +1,36 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Julia Whitman"
+  #favicon: /Users/juliawhitman/Documents/juliawebsite/mylogo.png # NOTE: that the `favicon` is a `website` level option (not under `navbar`)
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "About"
+        href: about.qmd
+      - text: "Blog"
+        href: posts.qmd
+      - href: /Users/juliawhitman/Documents/juliawebsite/CV.pdf # providing a relative file path to a pdf will open up a browser-based pdf viewer when clicked
+        text: CV
+        target: _blank
+    tools:
+      - icon: linkedin
+        href: https://www.linkedin.com/in/julia-whitman/
+      - icon: github
+        href: https://github.com/JuliaWhitL
+  page-footer:
+    background: light
+    left: Copyright 2024, Julia Whitman
+    right: This website is built with {{< fa heart title="a heart" >}} and [Quarto](https://quarto.org/){target=_blank}
+
+format:
+  html:
+    theme: styles.scss # I've also removed the `css: styles.css` option that was included by default, since I'll be writing all my sass and css in this single styles.scss file
+    toc: true
+    page-layout: full
+    mainfont: Lora
+
+editor: visual
