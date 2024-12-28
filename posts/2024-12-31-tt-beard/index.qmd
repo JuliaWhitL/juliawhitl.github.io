@@ -1,6 +1,6 @@
 ---
-title: "Tidy Tuesday: James Beard Award"
-description: "Looking at data in the Tidy Tuesday challenge for Dec 31, 2024"
+title: "#TidyTuesday: James Beard Awards"
+#description: "Looking at data in the Tidy Tuesday challenge for Dec 31, 2024"
 author:
   - name: Julia Whitman
 date: 12-31-2024
@@ -15,12 +15,6 @@ execute:
   comment: false
 ---
 
-# Instructions
-
--   Explore the data, watching out for interesting relationships. We would like to emphasize that you should not draw conclusions about causation in the data. There are various moderating variables that affect all data, many of which might not have been captured in these datasets. As such, our suggestion is to use the data provided to practice your data tidying and plotting techniques, and to consider for yourself what nuances might underlie these relationships.
--   Create a visualization, a model, a shiny app, or some other piece of data-science-related output, using R or another programming language.
--   Share your output and the code used to generate it on social media with the #TidyTuesday hashtag.
-
 ```{r}
 library(tidyverse)
 library(Hmisc)
@@ -30,6 +24,7 @@ library(data.table)
 library(ggplot2)
 library(plotly)
 library(lubridate)
+library(generics)
 ```
 
 ```{r}
@@ -41,23 +36,30 @@ leadership <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience
 restaurant_and_chef <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-31/restaurant_and_chef.csv')
 ```
 
-# Questions
+# What is it?
 
-## 1. How have the subcategories of the various awards changed over time?
+The [James Beard Awards](https://www.jamesbeard.org/awards) were established in 1990 to recognize leaders in the culinary and food media industries, and those in the broader food systems. Categories include Media (Book, Broadcast, and Journalism), Impact, and Restaurant & Chef awards.
 
-Let's start by looking at the winners and nominees for the James Beard **book awards**...
+Here is the code I used to explore some questions posed by the [#tidytuesday](https://github.com/rfordatascience/tidytuesday) team.
 
+# Explore the data
+
+How have the subcategories of the various awards changed over time? Let's start by looking at the winners and nominees for the James Beard **book awards**...
+
+::: {#fig-1}
 ```{r}
 # Create a "demo" dataset, counting the number of times a subcategory is listed by year
 demo <- book %>% group_by(year, subcategory) %>% summarise(n = n())
 
 # Plot categories over time
 plot_ly(data = demo, x = ~year, y = ~n, color = ~subcategory, type = 'bar') %>%
-  layout(barmode = 'stack')
+  layout(barmode = 'stack', title = "Book Awards")
 ```
+:::
 
 Yikes! Too many categories makes this impossible to read. Let's group like-categories...
 
+::: {#fig-2}
 ```{r}
 # Take a look at all the subcategories in our dataset
 #table(demo$subcategory, useNA = 'always') # no NAs
@@ -104,11 +106,17 @@ plot_ly(data = demo, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
   layout(barmode = 'stack', annotations = a, title = "Book Awards")
 
 ```
+:::
 
-Still a lot, but better. We can see that the pool of nominees is more varied now than it was in the 1970s and 80s. Some categories, like "simple" books for the home cook and books for healthy eating, have maintained their popularity while technical and general "entertainment" cookbooks have become less so. We also see a gap in the data in 2021 due to the COVID-19 pandemic.
+Still a lot, but better. For a more simplified view, you can double-click on a category to isolate it and layer other categories by clicking them once. Double-click again to return to the original view, or hover your mouse to get more granular information about the plot.
 
-Now let's take a look at some of the other award categories, like **Broadcast Media** and **Journalism**. We can use the same process as above to combine similar groups and look at how their popularity has evolved over time.
+We can see that the pool of nominees is more varied now than it was in the 1970s and 80s. Some categories - like "simple" books for home cooking and books for healthy eating - have maintained their popularity, while interest in technical and general "entertainment" cookbooks has petered out. We also see a gap in the data in 2021 due to the COVID-19 pandemic.
 
+Now let's take a look at some of the other award categories. We can use the same process as above to combine similar groups and look at how the subcategories of these different awards have evolved over time.
+
+::: panel-tabset
+## Broadcase Media
+::: {#fig-3}
 ```{r}
 #table(broadcast_media$subcategory, useNA = 'always') # no NAs
 demo2 <- broadcast_media %>% group_by(year, subcategory) %>% summarise(n = n())
@@ -148,7 +156,10 @@ a <- list(
 plot_ly(data = demo2, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
   layout(barmode = 'stack', annotations = a, title = "Broadcast Media Awards")
 ```
+:::
 
+## Food Journalism
+::: {#fig-4}
 ```{r}
 #table(journalism$subcategory, useNA = 'always') # no NAs
 demo3 <- journalism %>% group_by(year, subcategory) %>% summarise(n = n())
@@ -195,7 +206,10 @@ a <- list(
 plot_ly(data = demo3, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
   layout(barmode = 'stack', annotations = a, title = "Journalism Awards")
 ```
+:::
 
+## Restaurants & Chefs
+::: {#fig-5}
 ```{r}
 #table(restaurant_and_chef$subcategory, useNA = 'always') # no NAs
 demo4 <- restaurant_and_chef %>% group_by(year, subcategory) %>% summarise(n = n())
@@ -232,19 +246,53 @@ a <- list(
 plot_ly(data = demo4, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
   layout(barmode = 'stack', annotations = a, title = "Restaurant & Chef Awards")
 ```
+:::
 
-## 2. Has anybody won in multiple categories?
+:::
 
-## 3. Which restaurants have the most winners? Which newspapers or networks?
+Has anybody won in multiple categories? We can use the "generics" package to find names common to two datasets or vectors...
+```{r}
+generics::intersect(book$name, broadcast_media$name)
+generics::intersect(broadcast_media$name, journalism$name)
+generics::intersect(journalism$name, restaurant_and_chef$name)
+```
+It looks like there is quite a bit of overlap between the award categories! Let's see how we can visualize these overlaps using a heatmap...
 
-Finally, let's take a look at the biggest winners in the restaurant world.
+```{r, eval=FALSE}
+# take a look at the datasets (including missingness)
+describe(book) 
+describe(broadcast_media) 
+describe(journalism) 
+describe(leadership) 
+describe(restaurant_and_chef) # some missing values for "name" will be removed
+```
+We can start by subsetting the data with variables we want to compare. Then, we'll create indicator variables for each category before merging the five dataframes together.
+```{r}
+book$award <- "book"
+broadcast_media$award <- "broadcast"
+journalism$award <- "journalism"
+leadership$award <- "leadership"
+restaurant_and_chef$award <- "chef"
+
+d_book <- book %>%
+  select(rank, year, name, award)
+
+
+#put all data frames into list
+df_list <- list(book, broadcast_media, journalism, leadership, restaurant_and_chef)
+
+df_list %>% reduce(full_join, by='name')
+```
+
+
+Which restaurants have the most winners?
 
 ```{r, eval=FALSE}
 restaurant_and_chef %>% group_by(restaurant) %>% summarise(n = n()) %>%
    arrange(desc(n))
 ```
 
-It looks like some of the cities got put in the "restaurant" column. Let's fix that...
+How about newspapers and networks?
 
 ```{r}
 

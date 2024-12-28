@@ -4,7 +4,7 @@
     "href": "posts.html",
     "title": "Blog",
     "section": "",
-    "text": "Tidy Tuesday: James Beard Award\n\n\n\n\n\n\ntidy\n\n\n\nLooking at data in the Tidy Tuesday challenge for Dec 31, 2024\n\n\n\n\n\n12/31/24\n\n\nJulia Whitman\n\n\n\n\n\n\n\n\n\n\n\n\nProperties of variance estimators\n\n\n\n\n\n\nR\n\n\nvariance\n\n\nglms\n\n\n\nA look at their bias and stability under three data generating mechanisms\n\n\n\n\n\n7/15/24\n\n\nJulia Whitman\n\n\n\n\n\n\nNo matching items"
+    "text": "TidyTuesday: James Beard Awards\n\n\n\n\n\n\ntidy\n\n\n\n\n\n\n\n\n\n12/31/24\n\n\nJulia Whitman\n\n\n\n\n\n\n\n\n\n\n\n\nProperties of variance estimators\n\n\n\n\n\n\nR\n\n\nvariance\n\n\nglms\n\n\n\nA look at their bias and stability under three data generating mechanisms\n\n\n\n\n\n7/15/24\n\n\nJulia Whitman\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -109,14 +109,14 @@
     "href": "posts/2024-12-31-tt-beard/index.html",
     "title": "Tidy Tuesday: James Beard Award",
     "section": "",
-    "text": "Explore the data, watching out for interesting relationships. We would like to emphasize that you should not draw conclusions about causation in the data. There are various moderating variables that affect all data, many of which might not have been captured in these datasets. As such, our suggestion is to use the data provided to practice your data tidying and plotting techniques, and to consider for yourself what nuances might underlie these relationships.\nCreate a visualization, a model, a shiny app, or some other piece of data-science-related output, using R or another programming language.\nShare your output and the code used to generate it on social media with the #TidyTuesday hashtag."
+    "text": "The James Beard Awards were established in 1990 with the first awards given in 1991, and are among the nation’s most prestigious honors recognizing leaders in the culinary and food media industries, and those in the broader food systems. Award categories include Media (including Book, Broadcast, and Journalism), Impact, and Restaurant & Chef [ref].\nThis post is motivated by the"
   },
   {
     "objectID": "posts/2024-12-31-tt-beard/index.html#how-have-the-subcategories-of-the-various-awards-changed-over-time",
     "href": "posts/2024-12-31-tt-beard/index.html#how-have-the-subcategories-of-the-various-awards-changed-over-time",
     "title": "Tidy Tuesday: James Beard Award",
     "section": "1. How have the subcategories of the various awards changed over time?",
-    "text": "1. How have the subcategories of the various awards changed over time?\nLet’s start by looking at the winners and nominees for the James Beard book awards…\n\n\n\n\n\n\nYikes! Too many categories makes this impossible to read. Let’s group like-categories…\n\n\n\n\n\n\nStill a lot, but better. We can see that the pool of nominees is more varied now than it was in the 1970s and 80s. Some categories, like “simple” books for the home cook and books for healthy eating, have maintained their popularity while technical and general “entertainment” cookbooks have become less so. We also see a gap in the data in 2021 due to the COVID-19 pandemic.\nNow let’s take a look at some of the other award categories, like Broadcast Media and Journalism. We can use the same process as above to combine similar groups and look at how their popularity has evolved over time."
+    "text": "1. How have the subcategories of the various awards changed over time?\nLet’s start by looking at the winners and nominees for the James Beard book awards…\n\n\n\n\n\n\nYikes! Too many categories makes this impossible to read. Let’s group like-categories…\n\n\n\n\n\n\nStill a lot, but better. For a more simplified view, you can double-click on a category to isolate it and add other categories by clicking them once. Double-click again to return to the original view. Hover your mouse to get more granular information about the plot.\nWe can see that the pool of nominees is more varied now than it was in the 1970s and 80s. Some categories - like “simple” books for home cooking and books for healthy eating - have maintained their popularity, while interest in technical and general “entertainment” cookbooks has petered out. We also see a gap in the data in 2021 due to the COVID-19 pandemic.\nNow let’s take a look at some of the other award categories. We can use the same process as above to combine similar groups and look at how the subcategories of these different awards have evolved over time.\n\nBroadcase MediaFood JournalismRestaurants & Chefs"
   },
   {
     "objectID": "posts/2024-12-31-tt-beard/index.html#has-anybody-won-in-multiple-categories",
