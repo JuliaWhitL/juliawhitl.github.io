@@ -7,6 +7,4 @@ about:
 fontsize: 0.9em
 ---
 
-Hi there!
-I'm a biostatistician moonlighting as a data scientist.
-I love using statistics, visualizations, and common sense to help answer technical questions of all kinds and communicating with diverse audiences.
+Hi there! I'm a biostatistician moonlighting as a data scientist. I love using statistics, visualizations, and common sense to help answer technical questions of all kinds and communicating with diverse audiences.
