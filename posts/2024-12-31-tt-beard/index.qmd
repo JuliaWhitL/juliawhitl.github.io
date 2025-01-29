@@ -6,7 +6,7 @@ author:
 date: 12-31-2024
 categories: [tidy] # self-defined categories
 #image: preview-image.png
-draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 fontsize: 0.8em
 format: html
 execute: 
@@ -253,10 +253,10 @@ plot_ly(data = demo4, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
 Has anybody won in multiple categories? We can use the "generics" package to find names common to two datasets or vectors...
 ```{r}
 generics::intersect(book$name, broadcast_media$name)
-generics::intersect(broadcast_media$name, journalism$name)
-generics::intersect(journalism$name, restaurant_and_chef$name)
+#generics::intersect(broadcast_media$name, journalism$name)
+#generics::intersect(journalism$name, restaurant_and_chef$name)
 ```
-It looks like there is quite a bit of overlap between the award categories! Let's see how we can visualize these overlaps using a heatmap...
+It looks like there is quite a bit of overlap between award categories! Let's see how we can visualize these using a heatmap...
 
 ```{r, eval=FALSE}
 # take a look at the datasets (including missingness)
@@ -266,23 +266,103 @@ describe(journalism)
 describe(leadership) 
 describe(restaurant_and_chef) # some missing values for "name" will be removed
 ```
-We can start by subsetting the data with variables we want to compare. Then, we'll create indicator variables for each category before merging the five dataframes together.
+Let's subset the information we want from each dataframe before merging them together.
 ```{r}
-book$award <- "book"
-broadcast_media$award <- "broadcast"
-journalism$award <- "journalism"
-leadership$award <- "leadership"
-restaurant_and_chef$award <- "chef"
+# add unique df category to each dataset
+book$book <- 1
+broadcast_media$bmedia <- 1
+journalism$journalism <- 1
+leadership$leadership <- 1
+restaurant_and_chef$rchef <- 1
 
-d_book <- book %>%
-  select(rank, year, name, award)
+# extract variables using separate functions because not all dfs have same structure or colnames
+d_book <- book %>% select(rank, year, name, book)
+colnames(d_book) <- c("rank_book", "year", "name", "book")
 
+d_bmedia <- broadcast_media %>% select(rank, year, name, bmedia)
+colnames(d_bmedia) <- c("rank_media", "year", "name", "bmedia")
 
-#put all data frames into list
-df_list <- list(book, broadcast_media, journalism, leadership, restaurant_and_chef)
+d_journal <- journalism %>% select(rank, year, name, journalism)
+colnames(d_journal) <- c("rank_journal", "year", "name", "journalism")
 
-df_list %>% reduce(full_join, by='name')
+d_leader <- leadership %>% select(rank, year, name, leadership)
+colnames(d_leader) <- c("rank_leader", "year", "name", "leadership")
+
+d_rchef <- restaurant_and_chef %>% select(rank, year, name, rchef)
+colnames(d_rchef) <- c("rank_rc", "year", "name", "rchef")
+head(dta)
 ```
+Great. Now let's create a heatmap to show who has been nominated or won in each of the five award categories.
+```{r}
+# Example
+# Dummy data
+#x <- LETTERS[1:20]
+#y <- paste0("var", seq(1,20))
+#data <- expand.grid(X=x, Y=y)
+#data$Z <- runif(400, 0, 5)
+# Heatmap 
+#ggplot(data, aes(X, Y, fill= Z)) + 
+#  geom_tile()
+
+deleteLater <- d_book %>%
+  group_by(name, year) %>%
+  summarise(n = sum(book)) %>%
+  subset(substr(name, 1, 1) < 'E') %>% # select names starting with A-D
+  filter(year %in% c(2015:2024)) 
+#x = dta$name
+#y = year
+#z = numberwinsthatyear
+ggplot(deleteLater, aes(name, year, fill = n)) +
+  geom_tile() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+```
+
+```{r}
+d_book$award <- "book"
+d_bmedia$award <- "media"
+d_journal$award <- "journal"
+d_leader$award <- "leader"
+d_rchef$award <- "rchef"
+
+w_book <- d_book %>%
+  group_by(name, award, rank_book) %>%
+  summarise(n = sum(book)) %>%
+  filter(rank_book=="Winner")
+
+w_journal <- d_journal %>%
+  group_by(name, award, rank_journal) %>%
+  summarise(n = sum(journalism)) %>%
+  filter(rank_journal=="Winner")
+
+w_leader <- d_leader %>%
+  group_by(name, award, rank_leader) %>%
+  summarise(n = sum(leadership)) %>%
+              filter(rank_leader=="Winner")
+
+w_media <- d_bmedia %>%
+  group_by(name, award, rank_media) %>%
+  summarise(n = sum(bmedia)) %>%
+  filter(rank_media=="Winner")
+  
+w_rchef <- d_rchef %>%
+  group_by(name, award, rank_rc) %>%
+  summarise(n = sum(rchef)) %>%
+  filter(rank_rc=="Winner")
+
+foo <- list(w_book, w_journal, w_leader, w_media, w_rchef)
+dta <- do.call(rbind, foo )
+dta <-dta %>%
+  select(name, award, n)
+
+deleteLater <- dta %>%
+  subset(substr(name, 1,1) < 'B')
+
+ggplot(deleteLater, aes(name, award, fill = n)) +
+  geom_tile() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
 
 
 Which restaurants have the most winners?
