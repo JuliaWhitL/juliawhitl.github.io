@@ -307,7 +307,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 # Appendix A
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -0.0009940 | 0.1002895 | 0.1008992 | 0.0059317 | 40 |
 | Quasi-Poisson | -0.0009940 | 0.1002895 | 0.1001965 | 0.0128097 | 40 |
 | Sandwich | -0.0009940 | 0.1002895 | 0.0960385 | 0.0151834 | 40 |
@@ -316,7 +316,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -0.0010259 | 0.1003999 | 0.0973592 | 0.0132238 | 40 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0001144 | 0.0710886 | 0.0710773 | 0.0027804 | 80 |
 | Quasi-Poisson | 0.0001144 | 0.0710886 | 0.0708879 | 0.0062195 | 80 |
 | Sandwich | 0.0001144 | 0.0710886 | 0.0694400 | 0.0077999 | 80 |
@@ -325,7 +325,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | 0.0001041 | 0.0710657 | 0.0699370 | 0.0063132 | 80 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0001111 | 0.0509204 | 0.0500733 | 0.0014094 | 160 |
 | Quasi-Poisson | 0.0001111 | 0.0509204 | 0.0500396 | 0.0031808 | 160 |
 | Sandwich | 0.0001111 | 0.0509204 | 0.0494987 | 0.0039483 | 160 |
@@ -334,7 +334,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | 0.0001090 | 0.0509325 | 0.0497184 | 0.0032041 | 160 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -2.45e-05 | 0.0356758 | 0.0353965 | 0.0006970 | 320 |
 | Quasi-Poisson | -2.45e-05 | 0.0356758 | 0.0353809 | 0.0015685 | 320 |
 | Sandwich | -2.45e-05 | 0.0356758 | 0.0352190 | 0.0019766 | 320 |
@@ -343,7 +343,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -2.40e-05 | 0.0356753 | 0.0352691 | 0.0015739 | 320 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -0.0001867 | 0.0254378 | 0.0250178 | 0.0003546 | 640 |
 | Quasi-Poisson | -0.0001867 | 0.0254378 | 0.0249958 | 0.0007902 | 640 |
 | Sandwich | -0.0001867 | 0.0254378 | 0.0249337 | 0.0009954 | 640 |
@@ -352,7 +352,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -0.0001862 | 0.0254357 | 0.0249566 | 0.0007914 | 640 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0001345 | 0.0176523 | 0.0176835 | 0.0001767 | 1280 |
 | Quasi-Poisson | 0.0001345 | 0.0176523 | 0.0176820 | 0.0003931 | 1280 |
 | Sandwich | 0.0001345 | 0.0176523 | 0.0176559 | 0.0005042 | 1280 |
@@ -363,7 +363,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 # Appendix B
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0005630 | 0.0999775 | 0.0713014 | 0.0040900 | 40 |
 | Quasi-Poisson | 0.0005630 | 0.0999775 | 0.1003311 | 0.0127969 | 40 |
 | Sandwich | 0.0005630 | 0.0999775 | 0.0963882 | 0.0154432 | 40 |
@@ -372,7 +372,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | 0.0006271 | 0.1004317 | 0.0991426 | 0.0130081 | 40 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -0.0001310 | 0.0710436 | 0.0502586 | 0.0020100 | 80 |
 | Quasi-Poisson | -0.0001310 | 0.0710436 | 0.0708000 | 0.0063100 | 80 |
 | Sandwich | -0.0001310 | 0.0710436 | 0.0693645 | 0.0078348 | 80 |
@@ -381,7 +381,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -0.0001638 | 0.0712265 | 0.0703954 | 0.0063686 | 80 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -7.14e-05 | 0.0493180 | 0.0354186 | 0.0009622 | 160 |
 | Quasi-Poisson | -7.14e-05 | 0.0493180 | 0.0499829 | 0.0030762 | 160 |
 | Sandwich | -7.14e-05 | 0.0493180 | 0.0494599 | 0.0039000 | 160 |
@@ -390,7 +390,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -6.25e-05 | 0.0493607 | 0.0498488 | 0.0030926 | 160 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -0.0004218 | 0.0352038 | 0.0250113 | 0.0004908 | 320 |
 | Quasi-Poisson | -0.0004218 | 0.0352038 | 0.0353537 | 0.0015754 | 320 |
 | Sandwich | -0.0004218 | 0.0352038 | 0.0351714 | 0.0019917 | 320 |
@@ -399,7 +399,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -0.0004225 | 0.0352567 | 0.0353068 | 0.0015796 | 320 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0004378 | 0.0249512 | 0.0176867 | 0.0002480 | 640 |
 | Quasi-Poisson | 0.0004378 | 0.0249512 | 0.0250165 | 0.0007849 | 640 |
 | Sandwich | 0.0004378 | 0.0249512 | 0.0249503 | 0.0009959 | 640 |
@@ -408,7 +408,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | 0.0004406 | 0.0249523 | 0.0250001 | 0.0007858 | 640 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -9.27e-05 | 0.0178998 | 0.0125057 | 0.0001239 | 1280 |
 | Quasi-Poisson | -9.27e-05 | 0.0178998 | 0.0176819 | 0.0003912 | 1280 |
 | Sandwich | -9.27e-05 | 0.0178998 | 0.0176617 | 0.0005033 | 1280 |
@@ -419,7 +419,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 # Appendix C
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -0.0027832 | 0.1439292 | 0.1019518 | 0.0084881 | 40 |
 | Quasi-Poisson | -0.0027832 | 0.1439292 | 0.1402179 | 0.0191204 | 40 |
 | Sandwich | -0.0027832 | 0.1439292 | 0.1328639 | 0.0240734 | 40 |
@@ -428,7 +428,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -0.0028086 | 0.1446470 | 0.1378781 | 0.0193214 | 40 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0008553 | 0.0998830 | 0.0713471 | 0.0040432 | 80 |
 | Quasi-Poisson | 0.0008553 | 0.0998830 | 0.0995701 | 0.0097172 | 80 |
 | Sandwich | 0.0008553 | 0.0998830 | 0.0967408 | 0.0129371 | 80 |
@@ -437,7 +437,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | 0.0008852 | 0.1003217 | 0.0987918 | 0.0097646 | 80 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -0.0016617 | 0.0705224 | 0.0502501 | 0.0020107 | 160 |
 | Quasi-Poisson | -0.0016617 | 0.0705224 | 0.0706579 | 0.0049479 | 160 |
 | Sandwich | -0.0016617 | 0.0705224 | 0.0696534 | 0.0068886 | 160 |
@@ -446,7 +446,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -0.0016764 | 0.0706664 | 0.0703852 | 0.0049586 | 160 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0005659 | 0.0496569 | 0.0354417 | 0.0009989 | 320 |
 | Quasi-Poisson | 0.0005659 | 0.0496569 | 0.0499574 | 0.0025081 | 320 |
 | Sandwich | 0.0005659 | 0.0496569 | 0.0495701 | 0.0035080 | 320 |
@@ -455,7 +455,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | 0.0005690 | 0.0497315 | 0.0498621 | 0.0025068 | 320 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | -4.27e-05 | 0.0354887 | 0.0250402 | 0.0004891 | 640 |
 | Quasi-Poisson | -4.27e-05 | 0.0354887 | 0.0353174 | 0.0012548 | 640 |
 | Sandwich | -4.27e-05 | 0.0354887 | 0.0351914 | 0.0017861 | 640 |
@@ -464,7 +464,7 @@ $\beta$ and SE estimates calculated treating physical activity categorically and
 | Negative Binomial | -4.26e-05 | 0.0354916 | 0.0352842 | 0.0012567 | 640 |
 
 | Model | Avg. $\widehat{\beta}$ | ESE | $\widehat{SE}$ | $SD(\widehat{SE})$ | n |
-|:-----------|-----------:|-----------:|-----------:|-----------:|-----------:|
+|:---|---:|---:|---:|---:|---:|
 | Poisson | 0.0006466 | 0.0249429 | 0.0176902 | 0.0002509 | 1280 |
 | Quasi-Poisson | 0.0006466 | 0.0249429 | 0.0249985 | 0.0006259 | 1280 |
 | Sandwich | 0.0006466 | 0.0249429 | 0.0249509 | 0.0008784 | 1280 |

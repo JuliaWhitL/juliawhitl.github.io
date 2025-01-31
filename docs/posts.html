@@ -80,9 +80,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -180,7 +180,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-unnumbered"><div class="category" data-category="R">R</div><div class="category" data-category="glms">glms</div><div class="category" data-category="tidy">tidy</div><div class="category" data-category="variance">variance</div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-unnumbered"></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -209,78 +209,7 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="tidy" data-listing-date-sort="1735632000000" data-listing-file-modified-sort="1735341262554" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3200">
-<div class="thumbnail">
-<p><a href="./posts/2024-12-31-tt-beard/index.html" class="no-external"></a></p><a href="./posts/2024-12-31-tt-beard/index.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./posts/2024-12-31-tt-beard/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/2024-12-31-tt-beard/index.html" class="no-external">Tidy Tuesday: James Beard Award</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/2024-12-31-tt-beard/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('tidy'); return false;">
-tidy
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/2024-12-31-tt-beard/index.html" class="no-external">The James Beard Awards were established in 1990 to recognize leaders in the culinary and food media industries, and those in the broader food systems. Categories include…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/2024-12-31-tt-beard/index.html" class="no-external">
-<div class="listing-date">
-12/31/24
-</div>
-<div class="listing-author">
-Julia Whitman
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="R,variance,glms" data-listing-date-sort="1721026800000" data-listing-file-modified-sort="1733771442000" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="40" data-listing-word-count-sort="7858">
-<div class="thumbnail">
-<p><a href="./posts/2024-12-04-thesis-presentation/index.html" class="no-external"></a></p><a href="./posts/2024-12-04-thesis-presentation/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/2024-12-04-thesis-presentation/preview-image.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/2024-12-04-thesis-presentation/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/2024-12-04-thesis-presentation/index.html" class="no-external">Properties of variance estimators</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/2024-12-04-thesis-presentation/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('variance'); return false;">
-variance
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('glms'); return false;">
-glms
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/2024-12-04-thesis-presentation/index.html" class="no-external">A look at their bias and stability under three data generating mechanisms</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/2024-12-04-thesis-presentation/index.html" class="no-external">
-<div class="listing-date">
-7/15/24
-</div>
-<div class="listing-author">
-Julia Whitman
-</div>
-</a>
-</div>
-</div>
+
 </div>
 <div class="listing-no-matching d-none">
 No matching items

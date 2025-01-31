@@ -114,8 +114,9 @@ We can see that the pool of nominees is more varied now than it was in the 1970s
 
 Now let's take a look at some of the other award categories. We can use the same process as above to combine similar groups and look at how the subcategories of these different awards have evolved over time.
 
-::: panel-tabset
-## Broadcase Media
+:::::: panel-tabset
+## Broadcast Media
+
 ::: {#fig-3}
 ```{r}
 #table(broadcast_media$subcategory, useNA = 'always') # no NAs
@@ -159,6 +160,7 @@ plot_ly(data = demo2, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
 :::
 
 ## Food Journalism
+
 ::: {#fig-4}
 ```{r}
 #table(journalism$subcategory, useNA = 'always') # no NAs
@@ -209,6 +211,7 @@ plot_ly(data = demo3, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
 :::
 
 ## Restaurants & Chefs
+
 ::: {#fig-5}
 ```{r}
 #table(restaurant_and_chef$subcategory, useNA = 'always') # no NAs
@@ -247,15 +250,16 @@ plot_ly(data = demo4, x = ~year, y = ~n, color = ~subcat, type = 'bar') %>%
   layout(barmode = 'stack', annotations = a, title = "Restaurant & Chef Awards")
 ```
 :::
-
-:::
+::::::
 
 Has anybody won in multiple categories? We can use the "generics" package to find names common to two datasets or vectors...
+
 ```{r}
 generics::intersect(book$name, broadcast_media$name)
 #generics::intersect(broadcast_media$name, journalism$name)
 #generics::intersect(journalism$name, restaurant_and_chef$name)
 ```
+
 It looks like there is quite a bit of overlap between award categories! Let's see how we can visualize these using a heatmap...
 
 ```{r, eval=FALSE}
@@ -266,8 +270,10 @@ describe(journalism)
 describe(leadership) 
 describe(restaurant_and_chef) # some missing values for "name" will be removed
 ```
+
 Let's subset the information we want from each dataframe before merging them together.
-```{r}
+
+```{r, eval=FALSE}
 # add unique df category to each dataset
 book$book <- 1
 broadcast_media$bmedia <- 1
@@ -292,8 +298,10 @@ d_rchef <- restaurant_and_chef %>% select(rank, year, name, rchef)
 colnames(d_rchef) <- c("rank_rc", "year", "name", "rchef")
 head(dta)
 ```
+
 Great. Now let's create a heatmap to show who has been nominated or won in each of the five award categories.
-```{r}
+
+```{r, eval=FALSE}
 # Example
 # Dummy data
 #x <- LETTERS[1:20]
@@ -318,7 +326,7 @@ ggplot(deleteLater, aes(name, year, fill = n)) +
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 d_book$award <- "book"
 d_bmedia$award <- "media"
 d_journal$award <- "journal"
@@ -362,8 +370,6 @@ ggplot(deleteLater, aes(name, award, fill = n)) +
   geom_tile() + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
-
-
 
 Which restaurants have the most winners?
 

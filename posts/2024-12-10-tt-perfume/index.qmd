@@ -50,6 +50,7 @@ hookaddcap()   # make knitr call a function at the end of each chunk
 tuesdata <- tidytuesdayR::tt_load(2024, week = 50)
 dta <- tuesdata$parfumo_data_clean
 ```
+
 ```{r}
 # Convert blanks in character fields to NAs
 g <- function(x)
@@ -68,13 +69,16 @@ colnames(d) <- tolower(colnames(d))
 ```
 
 ## Missing data
+
 ```{r}
 missChk(d)
 dataOverview(d)
 ```
+
 'perfume' has 59, 325 observations (45 complete), and 13 variables (1 complete).
 
 ## Descriptive statistics
+
 ```{r}
 #sparkline::sparkline(0)
 
@@ -93,11 +97,13 @@ p
 ```
 
 ## Bivartiate Descriptions
+
 ```{r}
 #plot(summaryM(rating_value ~ release_year, data=d))
 ```
 
 ## Data Cleaning
+
 ```{r, eval=FALSE}
 ##Group notes into broad standard categories
 ## Top notes
@@ -490,12 +496,10 @@ d$synthetic[is.na(d$synthetic)] <- 0
 d$woody[is.na(d$woody)] <- 0
 ```
 
-
-
-
-
 # Questions
+
 ## What factors most influence the rating of a perfume?
+
 ```{r}
 # Rating x year
 ggplot(d, aes(x = release_year, y = rating_value)) + 
@@ -510,9 +514,4 @@ ggplot(d, aes(x = rating_count, y = rating_value)) +
 
 ## Are there distinct scent families that dominate the market, and how are they perceived by users?
 
-
 ## Has the popularity of certain fragrance notes evolved over time?
-
-
-
-
