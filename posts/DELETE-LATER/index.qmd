@@ -1,0 +1,90 @@
+---
+title: "index"
+format: html
+draft: true
+---
+
+
+```{r}
+library(readr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(gganimate)
+
+res40 <- read_csv("~/Documents/thesis/data/res40.csv")
+res80 <- read_csv("~/Documents/thesis/data/res80.csv")
+res160 <- read_csv("~/Documents/thesis/data/res160.csv")
+res320 <- read_csv("~/Documents/thesis/data/res320.csv")
+res640 <- read_csv("~/Documents/thesis/data/res640.csv")
+res1280 <- read_csv("~/Documents/thesis/data/res1280.csv")
+
+#include variable for sample size
+res40$n <- as.numeric(40)
+res80$n <- as.numeric(80)
+res160$n <- as.numeric(160)
+res320$n <- as.numeric(320)
+res640$n <- as.numeric(640)
+res1280$n <- as.numeric(1280)
+
+datalist <- list(res40, res80, res160, res320, res640, res1280)
+#make sure names are readable
+rename_func <- function(x) {
+  colnames(x) <- c("Model", "Avg Bhat", "ESE", "SEhat", "SEhat(SE)", "scenario", "n")
+}
+lapply(datalist, rename_func)
+#make sure all datasets are in the same order
+order_func <- function(x) {
+  x %>% arrange("Model", "scenario")
+}
+lapply(datalist, order_func)
+
+res40 <- datalist[[1]]
+res80 <- datalist[[2]]
+res160 <- datalist[[3]]
+res320 <- datalist[[4]]
+res640 <- datalist[[5]]
+res1280 <- datalist[[6]]
+
+#working dataset
+dta <- rbind(res40, res80, res160, res320, res640, res1280)
+colnames(dta) <- c("model", "avg_bhat", "ese", "sehat", "sehat_se", "scenario", "n")
+```
+
+```{r}
+head(mtcars)
+head(dta)
+
+ggplot(mtcars, aes(factor(cyl), mpg)) + 
+  geom_boxplot() + 
+  # Here comes the gganimate code
+  transition_states(
+    gear,
+    transition_length = 2,
+    state_length = 1
+  ) +
+  enter_fade() + 
+  exit_shrink() +
+  ease_aes('sine-in-out')
+```
+
+```{r}
+library(gapminder)
+head(gapminder)
+
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, colour = country)) +
+  geom_point(alpha = 0.7, show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  facet_wrap(~continent) +
+  # Here comes the gganimate specific bits
+  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) +
+  ease_aes('linear')
+  
+```
+```{r}
+ggplot(dta, aes())
+```
+
