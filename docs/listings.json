@@ -2,5 +2,9 @@
   {
     "listing": "/posts.html",
     "items": []
+  },
+  {
+    "listing": "/viz.html",
+    "items": []
   }
 ]

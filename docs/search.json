@@ -18,7 +18,7 @@
     "href": "about.html",
     "title": "Julia Whitman",
     "section": "",
-    "text": "I’m a data scientist at Meta where I study generative AI tools. I currently live in Seattle, WA with my husband, daughter and Billie, our neurotic Beagle rescue.\nA little bit about how I got here. In 2024 I completed my MS in biostatistics at Vanderbilt University, where I also worked as a statistician on the ACTIV6 trial. My research focused on the relative merits of different variance estimators. I spent some years before that working in cancer research as a data manager (2019-2021) and trials coordinator (2017-2019), studying colorectal and neuroendocrine cancers. I graduated from Imperial College London with a degree in epidemiology (2014), and was also an editor and bartender in a past life."
+    "text": "I’m a data scientist at Meta where I study generative AI tools. I currently live in Seattle, WA with my husband, daughter and Billie, our neurotic Beagle rescue.\nA little bit about how I got here. In 2024 I completed my MS in biostatistics at Vanderbilt University, where I also worked as a statistician on the ACTIV-6 trial. My research focused on the relative merits of different variance estimators. I spent some years before that working in cancer research as a data manager (2019-2021) and trials coordinator (2017-2019), studying colorectal and neuroendocrine cancers. I graduated from Imperial College London with a degree in epidemiology (2014), and was also an editor and bartender in a past life."
   },
   {
     "objectID": "posts/2024-12-31-tt-beard/index.html",
@@ -26,5 +26,33 @@
     "title": "#TidyTuesday: James Beard Awards",
     "section": "",
     "text": "What is it?\nThe James Beard Awards were established in 1990 to recognize leaders in the culinary and food media industries, and those in the broader food systems. Categories include Media (Book, Broadcast, and Journalism), Impact, and Restaurant & Chef awards.\nHere is the code I used to explore some questions posed by the #tidytuesday team.\n\n\nExplore the data\nHow have the subcategories of the various awards changed over time? Let’s start by looking at the winners and nominees for the James Beard book awards…\n\n\n\n\n\n\n\n\n\n\n\nFigure 1\n\n\n\nYikes! Too many categories makes this impossible to read. Let’s group like-categories…\n\n\n\n\n\n\n\n\n\n\n\nFigure 2\n\n\n\nStill a lot, but better. For a more simplified view, you can double-click on a category to isolate it and layer other categories by clicking them once. Double-click again to return to the original view, or hover your mouse to get more granular information about the plot.\nWe can see that the pool of nominees is more varied now than it was in the 1970s and 80s. Some categories - like “simple” books for home cooking and books for healthy eating - have maintained their popularity, while interest in technical and general “entertainment” cookbooks has petered out. We also see a gap in the data in 2021 due to the COVID-19 pandemic.\nNow let’s take a look at some of the other award categories. We can use the same process as above to combine similar groups and look at how the subcategories of these different awards have evolved over time.\n\nBroadcast MediaFood JournalismRestaurants & Chefs\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 4\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 5\n\n\n\n\n\n\nHas anybody won in multiple categories? We can use the “generics” package to find names common to two datasets or vectors…\n\n\n [1] \"Tamar Adler\"              \"José Andrés\"             \n [3] \"Jorge Gaviria\"            \"Marcus Samuelsson\"       \n [5] \"Nigella Lawson\"           \"Jancis Robinson\"         \n [7] \"Christopher Kimball\"      \"Samin Nosrat\"            \n [9] \"Vivian Howard\"            \"Rachel Nicole Purnell\"   \n[11] \"Jamie Oliver\"             \"David Kinch\"             \n[13] \"Mark Bittman\"             \"Amy Thielen\"             \n[15] \"Melissa Hamilton\"         \"Christopher Hirsheimer\"  \n[17] \"Chris Young\"              \"Lynne Rossetto Kasper\"   \n[19] \"Sally Swift\"              \"Gabrielle Hamilton\"      \n[21] \"Grace Young\"              \"Rozanne Gold\"            \n[23] \"David Chang\"              \"Lidia Bastianich\"        \n[25] \"Tanya Bastianich Manuali\" \"Martha Stewart\"          \n[27] \"Arthur Schwartz\"          \"Masaharu Morimoto\"       \n[29] \"Jacques Pépin\"            \"Molly O'Neill\"           \n[31] \"Susie Heller\"             \"Marilyn J. Brass\"        \n[33] \"Joan Nathan\"              \"Mario Batali\"            \n[35] \"Nikki Silva\"              \"Nina Simonds\"            \n[37] \"Jennifer Fite\"            \"Rose Levy Beranbaum\"     \n[39] \"David Rosengarten\"        \"Alton Brown\"             \n[41] \"Rocco DiSpirito\"          \"Michel Nischan\"          \n[43] \"Sara Moulton\"             \"Eric Ripert\"             \n[45] \"Raghavan Iyer\"            \"Andrea Immer Robinson\"   \n[47] \"Janet Fletcher\"           \"Tom Colicchio\"           \n[49] \"Linda West Eckhardt\"      \"Julia Child\"             \n[51] \"Charlie Trotter\"          \"Ruth Reichl\"             \n[53] \"Lorenza DeMedici\"         \"Pierre Franey\"           \n[55] \"Merle Ellis\"              \"Burt Wolf\"               \n\n\nIt looks like there is quite a bit of overlap between award categories! Let’s see how we can visualize these using a heatmap…\nLet’s subset the information we want from each dataframe before merging them together.\nGreat. Now let’s create a heatmap to show who has been nominated or won in each of the five award categories.\nWhich restaurants have the most winners?\nHow about newspapers and networks?"
+  },
+  {
+    "objectID": "cv/index.html",
+    "href": "cv/index.html",
+    "title": "Julia Whitman",
+    "section": "",
+    "text": "Download current CV"
+  },
+  {
+    "objectID": "viz/index.html",
+    "href": "viz/index.html",
+    "title": "index",
+    "section": "",
+    "text": "Under construction"
+  },
+  {
+    "objectID": "viz.html",
+    "href": "viz.html",
+    "title": "Visualizations",
+    "section": "",
+    "text": "No matching items"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "Julia Whitman",
+    "section": "Education",
+    "text": "Education\nVanderbilt University | Nashville, TN\nMS in Biostatistics | August 2024\nImperial College London | London, England\nMSc in Epidemiology | June 2014"
   }
 ]

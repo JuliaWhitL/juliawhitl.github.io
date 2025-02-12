@@ -1,0 +1,9 @@
+---
+title: "Visualizations"
+listing:
+  contents: viz
+  type: default
+  sort: "date desc"
+  date-format: short
+  categories: unnumbered
+---
